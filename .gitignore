@@ -1,0 +1,5 @@
+.env
+.venv
+.ropeproject
+
+rg_server/__pycache__
