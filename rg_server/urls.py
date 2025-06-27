@@ -46,11 +46,13 @@ router.register(r'users', UserViewSet)
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
-    path('', include(router.urls)),
-    # Include API endpoints like users/ (that provide users list)
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    # Authentication endpoints
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
+    path('api/', include([
+        path('', include(router.urls)),
+        # Include API endpoints like users/ (that provide users list)
+        path('auth/', include('rest_framework.urls', namespace='rest_framework')),
+        # Authentication endpoints
+        path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+        path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+        path('token/verify/', TokenVerifyView.as_view(), name='token_verify'),
+    ])),
 ]
