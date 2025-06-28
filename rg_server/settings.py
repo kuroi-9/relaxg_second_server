@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
+    'corsheaders',
 ]
 
 REST_FRAMEWORK = {
@@ -64,11 +65,37 @@ SIMPLE_JWT = {
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware', # Order matters! It should be called soon enough to be able to place its headers
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+# --- CORS SETTINGS ---
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",  # This is the default URL for Vite in development mode
+]
+
+# If you want to allow all origins (NOT RECOMMENDED IN PRODUCTION!)
+# CORS_ALLOW_ALL_ORIGINS = True
+
+# If you are using cookies or complex authorization headers (like JWT),
+# this is often necessary.
+CORS_ALLOW_CREDENTIALS = True
+
+# If you have custom headers that your frontend sends
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "accept-encoding",
+    "authorization", # This is essential for the "Authorization: Bearer <token>" header
+    "content-type",
+    "dnt",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
 ]
 
 ROOT_URLCONF = 'rg_server.urls'
