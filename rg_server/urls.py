@@ -56,8 +56,8 @@ urlpatterns = [
         path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
         path('token/verify/', TokenVerifyView.as_view(), name='token_verify'),
 
-        # --- Nos nouvelles vues ---
+        # Auth test views
         path('hello-protected/', ProtectedHelloView.as_view(), name='hello_protected'),
-        path('hello-public/', PublicHelloView.as_view(), name='hello_public'), # Vue publique pour comparaison
+        path('hello-public/', PublicHelloView.as_view(), name='hello_public'), # Public view for comparison
     ])),
 ]
