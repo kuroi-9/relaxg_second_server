@@ -52,6 +52,7 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
+    'TOKEN_OBTAIN_SERIALIZER': 'rg_server.serializers.CustomTokenObtainPairSerializer',
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': True,
