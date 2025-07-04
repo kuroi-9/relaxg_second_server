@@ -1,63 +1,39 @@
-"""
-URL configuration for rg_server project.
+from django.contrib import admin
+from django.urls import path
+# Django views
+from rest_framework_simplejwt.views import TokenRefreshView, TokenVerifyView
+# App views
+from rg_server.views import (
+    CustomTokenObtainPairView,
+    LogoutView,
+    UserMeView,
+    ProtectedDataView,
+    PublicInfoView,
+    get_csrf_token
+)
 
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
-# from django.contrib import admin
-# from django.urls import path, include
-
-# urlpatterns = [
-#     path('admin/', admin.site.urls),
-#     path('api-auth/', include('rest_framework.urls')),
-# ]
-
-
-from django.urls import path, include
-from django.contrib.auth.models import User
-from rest_framework import routers, serializers, viewsets
-from rest_framework_simplejwt.views import TokenVerifyView, TokenRefreshView, TokenObtainPairView
-from .views import ProtectedHelloView, PublicHelloView
-
-# Serializers define the API representation.
-class UserSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = User
-        fields = ['url', 'username', 'email', 'is_staff']
-
-# ViewSets define the view behavior.
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-
-# Routers provide an easy way of automatically determining the URL conf.
-router = routers.DefaultRouter()
-router.register(r'users', UserViewSet)
-
-# Wire up our API using automatic URL routing.
-# Additionally, we include login URLs for the browsable API.
 urlpatterns = [
-    path('api/', include([
-        path('', include(router.urls)),
-        # Include API endpoints like users/ (that provide users list)
-        path('auth/', include('rest_framework.urls', namespace='rest_framework')),
-        # Authentication endpoints
-        path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-        path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-        path('token/verify/', TokenVerifyView.as_view(), name='token_verify'),
+    path('admin/', admin.site.urls),
 
-        # Auth test views
-        path('hello-protected/', ProtectedHelloView.as_view(), name='hello_protected'),
-        path('hello-public/', PublicHelloView.as_view(), name='hello_public'), # Public view for comparison
-    ])),
+    # Auth
+    # Getting token if correct credentials
+    path('api/token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    # Refreshing tokens
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    # Verifying a token (useful for debugging)
+    path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
+    # Logout
+    path('api/logout/', LogoutView.as_view(), name='logout'),
+
+    # User and protected views
+    # Retrieve user information
+    path('api/user/me/', UserMeView.as_view(), name='user_me'),
+    # Example of protected resource
+    path('api/protected-data/', ProtectedDataView.as_view(), name='protected_data'),
+
+    # Public views
+    # Public test view
+    path('api/public-info/', PublicInfoView.as_view(), name='public_info'),
+    # View to obtain CSRF token
+    path('api/get-csrf-token/', get_csrf_token, name='get_csrf_token'),
 ]

@@ -46,21 +46,54 @@ INSTALLED_APPS = [
 ]
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+            'rg_server.authenticate.JWTCookieAuthentication',
+            # 'rest_framework.authentication.SessionAuthentication',
+        ),
 }
 
 SIMPLE_JWT = {
-    'TOKEN_OBTAIN_SERIALIZER': 'rg_server.serializers.CustomTokenObtainPairSerializer',
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
-    'ROTATE_REFRESH_TOKENS': True,
-    'BLACKLIST_AFTER_ROTATION': True,
-    'ALGORITHM': 'HS256',
-    'SIGNING_KEY': config('SIGNING_KEY'),
-    'AUTH_HEADER_TYPES': ('Bearer',),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),  # Short lifetime for Access Token (e.g., 5 minutes)
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),   # Longer lifetime for Refresh Token (e.g., 7 days)
+
+    'ROTATE_REFRESH_TOKENS': True, # Highly recommended: a new Refresh Token is issued with each refresh
+    'BLACKLIST_AFTER_ROTATION': True, # Invalidates the old Refresh Token after rotation
+
+    'UPDATE_LAST_LOGIN': False, # Set to True if you want to update the user's last_login field
+
+    'ALGORITHM': 'HS256', # Signature algorithm
+    'SIGNING_KEY': SECRET_KEY, # **USE YOUR DJANGO SECRET_KEY**, never expose it!
+    'VERIFYING_KEY': None,
+    'AUDIENCE': None,
+    'ISSUER': None,
+    'JWK_URL': None,
+    'LEEWAY': 0,
+
+    'AUTH_HEADER_TYPES': ('Bearer',), # Header type (e.g., Authorization: Bearer <token>)
+    'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+    'USER_AUTHENTICATION_RULE': 'rest_framework_simplejwt.authentication.default_user_authentication_rule',
+
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    'TOKEN_TYPE_CLAIM': 'token_type',
+    'TOKEN_USER_CLASS': 'rest_framework_simplejwt.models.TokenUser',
+
+    'JTI_CLAIM': 'jti',
+
+    # HTTP-only
+    'AUTH_COOKIE': 'access_token',
+    'AUTH_COOKIE_DOMAIN': None, # Set for subdomains if needed (e.g., '.yourdomain.com')
+    'AUTH_COOKIE_SECURE': False, # **SET TO TRUE IN PRODUCTION (REQUIRES HTTPS)!**
+    'AUTH_COOKIE_HTTP_ONLY': True, # Prevents JavaScript access to the cookie
+    'AUTH_COOKIE_SAMESITE': 'Lax', # 'Lax' or 'Strict' for CSRF protection. 'None' requires 'Secure: True'.
+
+    # Cookie name for the Refresh Token
+    'AUTH_COOKIE_REFRESH': 'refresh_token',
+    'AUTH_COOKIE_REFRESH_DOMAIN': None,
+    'AUTH_COOKIE_REFRESH_SECURE': False, # **SET TO TRUE IN PRODUCTION (REQUIRES HTTPS)!**
+    'AUTH_COOKIE_REFRESH_HTTP_ONLY': True,
+    'AUTH_COOKIE_REFRESH_SAMESITE': 'Lax',
 }
 
 MIDDLEWARE = [
@@ -74,19 +107,12 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# --- CORS SETTINGS ---
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",  # This is the default URL for Vite in development mode
+    "http://localhost:5173",
 ]
-
-# If you want to allow all origins (NOT RECOMMENDED IN PRODUCTION!)
 # CORS_ALLOW_ALL_ORIGINS = True
-
-# If you are using cookies or complex authorization headers (like JWT),
-# this is often necessary.
 CORS_ALLOW_CREDENTIALS = True
 
-# If you have custom headers that your frontend sends
 CORS_ALLOW_HEADERS = [
     "accept",
     "accept-encoding",
