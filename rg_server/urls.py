@@ -1,10 +1,11 @@
 from django.contrib import admin
 from django.urls import path
 # Django views
-from rest_framework_simplejwt.views import TokenRefreshView, TokenVerifyView
+from rest_framework_simplejwt.views import TokenVerifyView
 # App views
 from rg_server.views import (
     CustomTokenObtainPairView,
+    CustomTokenRefreshView,
     LogoutView,
     UserMeView,
     ProtectedDataView,
@@ -19,7 +20,7 @@ urlpatterns = [
     # Getting token if correct credentials
     path('api/token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
     # Refreshing tokens
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/token/refresh/', CustomTokenRefreshView.as_view(), name='token_refresh'),
     # Verifying a token (useful for debugging)
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     # Logout

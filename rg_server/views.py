@@ -1,4 +1,6 @@
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.views import TokenRefreshView
+from .serializers import CustomTokenRefreshSerializer
 from django.conf import settings
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
@@ -33,6 +35,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     """
     def post(self, request):
         serializer = self.get_serializer(data=request.data)
+        # The below code IS reachable (Pyright fail moment)
 
         if not serializer.is_valid():
             # Handle validation errors (e.g., invalid credentials)
@@ -72,6 +75,33 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         )
 
         return response
+
+class CustomTokenRefreshView(TokenRefreshView):
+    def finalize_response(self, request, response, *args, **kwargs):
+        if response.data.get('refresh'):
+            # Issuing a new Access Token
+            response.set_cookie(
+                key=settings.SIMPLE_JWT['AUTH_COOKIE'],
+                value=response.data['access'],
+                expires=settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'],
+                secure=settings.SIMPLE_JWT['AUTH_COOKIE_SECURE'],
+                httponly=settings.SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'],
+                samesite=settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE']
+            )
+
+            # Issuing a new Refresh Token
+            response.set_cookie(
+                key=settings.SIMPLE_JWT['AUTH_COOKIE_REFRESH'],
+                value=response.data['refresh'],
+                expires=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'],
+                secure=settings.SIMPLE_JWT['AUTH_COOKIE_REFRESH_SECURE'],
+                httponly=settings.SIMPLE_JWT['AUTH_COOKIE_REFRESH_HTTP_ONLY'],
+                samesite=settings.SIMPLE_JWT['AUTH_COOKIE_REFRESH_SAMESITE']
+            )
+            del response.data['access']
+            del response.data['refresh']
+        return super().finalize_response(request, response, *args, **kwargs)
+    serializer_class = CustomTokenRefreshSerializer
 
 class LogoutView(APIView):
     """
