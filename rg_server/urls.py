@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 # Django views
 from rest_framework_simplejwt.views import TokenVerifyView
 # App views
@@ -37,4 +37,7 @@ urlpatterns = [
     path('api/public-info/', PublicInfoView.as_view(), name='public_info'),
     # View to obtain CSRF token
     path('api/get-csrf-token/', get_csrf_token, name='get_csrf_token'),
+
+    # Library app views
+    path('api/library/', include('library.urls'))
 ]
