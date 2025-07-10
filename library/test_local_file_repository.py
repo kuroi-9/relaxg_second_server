@@ -40,7 +40,7 @@ class LocalFileRepositoryTests(TestCase):
         with patch('os.listdir', return_value=mock_listdir_return_value), \
              patch('os.walk', side_effect=mock_os_walk_side_effect):
             # Call the function to test
-            actual_files = self.repository.list_available_book_series('/mock/root', extensions)
+            actual_files = self.repository.list_available_bookseries('/mock/root', extensions)
 
             # Verify assertions
             self.assertCountEqual(actual_files, expected_files)
@@ -59,7 +59,7 @@ class LocalFileRepositoryTests(TestCase):
         extensions = ['.cbz']
 
         with patch('os.listdir', return_value=mock_listdir_return_value):
-            actual_files = self.repository.list_available_book_series('/mock/root', extensions)
+            actual_files = self.repository.list_available_bookseries('/mock/root', extensions)
             self.assertEqual(actual_files, [])
             self.assertEqual(len(actual_files), 0)
 
@@ -82,7 +82,7 @@ class LocalFileRepositoryTests(TestCase):
 
         with patch('os.listdir', return_value=mock_listdir_return_value), \
              patch('os.walk', side_effect=mock_os_walk_side_effect):
-            actual_files = self.repository.list_available_book_series('/mock/root', extensions)
+            actual_files = self.repository.list_available_bookseries('/mock/root', extensions)
             self.assertEqual(actual_files, [])
             self.assertEqual(len(actual_files), 0)
 
@@ -98,7 +98,7 @@ class LocalFileRepositoryTests(TestCase):
 
         with patch('os.listdir', side_effect=FileNotFoundError("Directory not found")):
             with self.assertRaises(FileNotFoundError) as context:
-                self.repository.list_available_book_series('/invalid/path', extensions)
+                self.repository.list_available_bookseries('/invalid/path', extensions)
 
             self.assertIn("The directory '/invalid/path' does not exist.", str(context.exception))
 
@@ -130,7 +130,7 @@ class LocalFileRepositoryTests(TestCase):
 
         with patch('os.listdir', return_value=mock_listdir_return_value), \
              patch('os.walk', side_effect=mock_os_walk_side_effect):
-            actual_files = self.repository.list_available_book_series('/mock/root', extensions)
+            actual_files = self.repository.list_available_bookseries('/mock/root', extensions)
             self.assertCountEqual(actual_files, expected_files)
             self.assertEqual(len(actual_files), len(expected_files))
 
@@ -162,7 +162,7 @@ class LocalFileRepositoryTests(TestCase):
 
         with patch('os.listdir', return_value=mock_listdir_return_value), \
              patch('os.walk', side_effect=mock_os_walk_side_effect):
-            actual_files = self.repository.list_available_book_series('/mock/root', extensions)
+            actual_files = self.repository.list_available_bookseries('/mock/root', extensions)
             self.assertCountEqual(actual_files, expected_files)
             self.assertEqual(len(actual_files), len(expected_files))
 
@@ -192,7 +192,7 @@ class LocalFileRepositoryTests(TestCase):
 
         with patch('os.listdir', return_value=mock_listdir_return_value), \
              patch('os.walk', side_effect=mock_os_walk_side_effect):
-            actual_files = self.repository.list_available_book_series('/mock/root', extensions)
+            actual_files = self.repository.list_available_bookseries('/mock/root', extensions)
             self.assertCountEqual(actual_files, expected_files)
             self.assertEqual(len(actual_files), len(expected_files))
 
@@ -223,7 +223,7 @@ class LocalFileRepositoryTests(TestCase):
 
         with patch('os.listdir', return_value=mock_listdir_return_value), \
              patch('os.walk', side_effect=mock_os_walk_side_effect):
-            actual_files = self.repository.list_available_book_series('/mock/root', extensions)
+            actual_files = self.repository.list_available_bookseries('/mock/root', extensions)
             self.assertCountEqual(actual_files, expected_files)
             self.assertEqual(len(actual_files), len(expected_files))
 
@@ -255,7 +255,7 @@ class LocalFileRepositoryTests(TestCase):
 
         with patch('os.listdir', return_value=mock_listdir_return_value), \
              patch('os.walk', side_effect=mock_os_walk_side_effect):
-            actual_files = self.repository.list_available_book_series('/mock/root', extensions)
+            actual_files = self.repository.list_available_bookseries('/mock/root', extensions)
 
             # Check that we have the expected unique paths
             self.assertCountEqual(actual_files, expected_files)
