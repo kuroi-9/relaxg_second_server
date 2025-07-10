@@ -1,5 +1,5 @@
-from your_app_name.models import Book
-from typing import Dict, Any, List
+from library.models import Book
+from typing import Dict, Any
 from django.db.models import QuerySet
 
 class BookDBRepository:

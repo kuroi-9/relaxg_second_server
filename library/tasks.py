@@ -6,8 +6,11 @@ from library.repositories.local_file_repository import LocalFileRepository
 # Import du repository user_profile_repository pour obtenir le répertoire par défaut
 from library.repositories.user_profile_repository import UserProfileRepository
 import logging
+from django.conf import settings
+
 
 logger = logging.getLogger(__name__)
+localFileRepository = LocalFileRepository()
 
 @shared_task
 def initiate_library_scan_task(scan_directory_path: str | None, user_id: int):
@@ -20,7 +23,19 @@ def initiate_library_scan_task(scan_directory_path: str | None, user_id: int):
     # **Relations:** Called by `BookCatalogService.initiate_library_scan()`.
     #   Interacts with `LocalFileRepository.list_available_books()`.
     #   Calls `process_single_scanned_book_task.delay()` for each file.
-    pass
+
+    # TODO: Get books dir from user profile
+    book_dir = getattr(settings, 'BOOK_DIR')
+    if scan_directory_path is None:
+        scan_directory_path = book_dir
+
+    assert scan_directory_path is not None
+    available_book_series_paths = localFileRepository.list_available_book_series(scan_directory_path, [".cbz"])
+    for title_path in available_book_series_paths:
+        process_single_scanned_book_task(title_path, user_id)
+
+    #logger.info(f"Scan completed for user {user_id}")
+    logger.info("Scan completed")
 
 @shared_task
 def process_single_scanned_book_task(file_path: str, user_id: int):
