@@ -6,3 +6,4 @@ rg_server/__pycache__
 library/__pycache__
 library/migrations
 library/repositories/__pycache__
+library/services/__pycache__

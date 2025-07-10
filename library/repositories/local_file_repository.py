@@ -7,7 +7,7 @@ class LocalFileRepository:
     LocalFileRepository class provides methods to interact with local files.
     """
 
-    def list_available_book_series(self, books_directory_path: str, extensions: List[str]) -> List[str]:
+    def list_available_bookseries(self, books_directory_path: str, extensions: List[str]) -> List[str]:
         """
         Prototype: Lists book series paths with certain extensions in a given directory (recursive).
         Pre-conditions: 'book_directory_path' is a valid path, 'extensions' is a list of formats (e.g., ['.cbz']).
@@ -26,19 +26,19 @@ class LocalFileRepository:
             raise FileNotFoundError(f"The directory '{books_directory_path}' does not exist.")
         return list(available_book_series)
 
-    def list_available_volumes(self, book_directory_path: str, extensions: List[str]) -> List[str]:
+    def list_available_volumes(self, parent_series_directory_path: str, extensions: List[str]) -> List[str]:
         """
         Lists all available volumes in a given directory.
         """
 
         available_volumes = []
         try:
-            for root, dirs, files in os.walk(book_directory_path):
+            for root, dirs, files in os.walk(parent_series_directory_path):
                 for file in files:
                     if file.endswith(tuple(extensions)):
                         available_volumes.append(os.path.join(root, file))
         except FileNotFoundError:
-            raise FileNotFoundError(f"The directory '{book_directory_path}' does not exist.")
+            raise FileNotFoundError(f"The directory '{parent_series_directory_path}' does not exist.")
         return available_volumes
 
     # Prototype: Checks the existence and read accessibility of a file.

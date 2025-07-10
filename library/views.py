@@ -20,7 +20,10 @@ class LibraryRefreshAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request: Request, *args, **kwargs) -> Response:
-        pass
+        from library.services.book_catalog_service import BookCatalogService  # Import inside the method
+        bookCatalogService = BookCatalogService()
+        bookCatalogService.initiate_library_scan(None, request.user.id)
+        return Response({"content_type": "application/json", "message": "Scan launched successfully, please wait for the scan to complete."}, status=202)
 
     def get(self, request: Request, *args, **kwargs) -> Response:
         return Response({"content_type": "application/json", "message": "Scan launched successfully"}, status=202)

@@ -5,7 +5,9 @@ from library.repositories.local_file_repository import LocalFileRepository
 # Import service from other application for communication
 #from upscale_processor_app.services.upscaling_orchestrator_service import UpscalingOrchestratorService
 # Import Celery tasks from library_app
-from library.tasks import initiate_library_scan_task, process_single_scanned_book_task
+from library.tasks import initiate_library_scan_task
+
+bookDBRepository = BookDBRepository()
 
 class BookCatalogService:
     # Prototype: Initialize the service with its dependencies.
@@ -33,22 +35,27 @@ class BookCatalogService:
     # - Returns True if the scan process is launched successfully (delegation to a Celery task).
     # - Raises an Exception (e.g., PermissionError) if the directory is not accessible.
     # **Relations:** Calls `initiate_library_scan_task.delay()`.
-    def initiate_library_scan(self, scan_directory_path: str | None, user_id: int) -> bool:
-        pass
+    def initiate_library_scan(self, scan_books_directory_path: str | None, user_id: int) -> bool:
+        initiate_library_scan_task(scan_books_directory_path, user_id)
 
     # Prototype: Handle the addition/update of an individual book following a scan.
     # Pre-conditions:
     # - 'file_path' is the absolute path of the book file.
     # - 'user_id' is the ID of the user who owns the book (or who triggered the scan).
+    # - 'parent_series_directory' is the absolute path of the parent series directory.
     # Post-conditions:
+    # - Creates a new series if non-existent, or updates its metadata (title, author, hash, size, status).
     # - Creates a new book if non-existent, or updates its metadata (title, author, hash, size, status).
-    # - Returns the processed Book object.
+    # - Returns if the book was successfully processed.
     # - Handles extraction or external API errors by updating the book status to 'FAILED' or 'ERROR'.
+    # - Raises an exception if any error occurs during a volume processing.
+    #   If it affects the series, it raises an exception.
     # **Relations:** Called by `process_single_scanned_book_task`.
     #   Interacts with `BookDBRepository` (get_book_by_file_path, create_book, update_book).
     #   Interacts with `LocalFileRepository` (calculate_file_hash, get_file_size).
     #   May interact with other services like `MetadataExtractionService`.
-    def process_scanned_book(self, file_path: str, user_id: int) -> Book:
+    def process_scanned_volume(self, file_path: str, user_id: int, parent_bookseries_directory: str) -> bool:
+        # Checking if the series exists
         pass
 
     # Prototype: Trigger an upscaling job via the 'upscale_processor_app' application service.
