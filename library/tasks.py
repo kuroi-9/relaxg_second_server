@@ -48,7 +48,7 @@ def process_single_scanned_bookseries_task(parent_bookseries_directory: str, use
     #   Calls `BookCatalogService.process_scanned_book()`.
     volumes = localFileRepository.list_available_volumes(parent_bookseries_directory, [".cbz"])
     for volume in volumes:
-        isVolumeScannedSuccessfully = process_scanned_volume(volume, user_id, parent_bookseries_directory)
+        isVolumeScannedSuccessfully = process_single_scanned_volume(volume, user_id, parent_bookseries_directory)
         if isVolumeScannedSuccessfully:
             logger.info(f"Volume '{volume}' of '{parent_bookseries_directory}' scanned successfully.")
         else:
@@ -56,7 +56,18 @@ def process_single_scanned_bookseries_task(parent_bookseries_directory: str, use
 
     logger.info(f"Scan completed for series '{parent_bookseries_directory}'")
 
-def process_scanned_volume(file_path: str, user_id: int, parent_bookseries_directory: str) -> bool:
+def process_single_scanned_volume(file_path: str, user_id: int, parent_bookseries_directory: str) -> bool:
+    """Process a scanned volume.
+
+    Args:
+        file_path (str): The file path of the scanned volume.
+        user_id (int): The ID of the user who initiated the scan.
+        parent_bookseries_directory (str): The directory path of the parent book series.
+
+    Returns:
+        bool: True if the volume was scanned successfully, False otherwise.
+    """
+
     bookSeries = bookDBRepository.get_bookseries_by_filepath(parent_bookseries_directory)
     if bookSeries is None:
         try:
