@@ -1,7 +1,6 @@
 import os
 from typing import List
 
-
 class LocalFileRepository:
     """
     LocalFileRepository class provides methods to interact with local files.
