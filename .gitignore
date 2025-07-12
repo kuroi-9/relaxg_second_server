@@ -7,3 +7,4 @@ library/__pycache__
 library/migrations
 library/repositories/__pycache__
 library/services/__pycache__
+library/tests/__pycache__

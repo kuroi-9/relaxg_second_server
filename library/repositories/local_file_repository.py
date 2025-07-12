@@ -21,7 +21,9 @@ class LocalFileRepository:
                 for root, dirs, files in os.walk(os.path.join(books_directory_path, dir)):
                     for file in files:
                         if file.endswith(tuple(extensions)):
-                            available_book_series.add(os.path.join(root) + "/")
+                            split_path = os.path.split(root)
+                            if split_path[1] != "out" and split_path[1] != "masked":
+                                available_book_series.add(os.path.join(root) + "/")
         except FileNotFoundError:
             raise FileNotFoundError(f"The directory '{books_directory_path}' does not exist.")
         return list(available_book_series)
@@ -36,7 +38,9 @@ class LocalFileRepository:
             for root, dirs, files in os.walk(parent_series_directory_path):
                 for file in files:
                     if file.endswith(tuple(extensions)):
-                        available_volumes.append(os.path.join(root, file))
+                        split_path = os.path.split(root)
+                        if split_path[1] != "out" and split_path[1] != "masked":
+                            available_volumes.append(os.path.join(root, file))
         except FileNotFoundError:
             raise FileNotFoundError(f"The directory '{parent_series_directory_path}' does not exist.")
         return available_volumes

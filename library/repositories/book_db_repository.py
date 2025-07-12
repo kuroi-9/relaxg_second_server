@@ -3,6 +3,7 @@ from library.models import Book, BookSeries
 from typing import Dict, Any
 
 class BookDBRepository:
+
     def create_bookseries(self, data: Dict[str, Any]):
         bookseries = BookSeries(**data)
         bookseries.save()

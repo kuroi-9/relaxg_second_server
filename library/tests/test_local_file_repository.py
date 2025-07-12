@@ -25,14 +25,18 @@ class LocalFileRepositoryTests(TestCase):
 
         def mock_os_walk_side_effect(path):
             if path == '/mock/root/dir1':
-                return [('/mock/root/dir1', [], ['file3.cbz', 'file4.txt'])]
+                return [('/mock/root/dir1', ['out', 'masked'], ['file3.cbz', 'file4.txt'])]
             elif path == '/mock/root/dir2':
                 return [('/mock/root/dir2', [], ['file5.cbz'])]
+            elif path == '/mock/root/dir1/out':
+                return [('/mock/root/dir1/out', [], ['file6.cbz', 'file7.txt'])]
+            elif path == '/mock/root/dir1/masked':
+                return [('/mock/root/dir1/masked', [], ['file8.cbz', 'file9.txt'])]
             return []
 
         expected_files = [
             '/mock/root/dir1/',
-            '/mock/root/dir2/'
+            '/mock/root/dir2/',
         ]
         extensions = ['.cbz']
 
@@ -281,7 +285,9 @@ class LocalFileRepositoryTests(TestCase):
             if path == '/mock/root/series':
                 return [
                     ('/mock/root/series', ['title1', 'title2'], ['readme.txt']),
-                    ('/mock/root/series/title1', [], ['volume1.cbz', 'volume2.cbz', 'info.txt']),
+                    ('/mock/root/series/title1', ['out', 'masked'], ['volume1.cbz', 'volume2.cbz', 'info.txt']),
+                    ('/mock/root/series/title1/out', [], ['volume1.cbz', 'volume2.cbz', 'info.txt']),
+                    ('/mock/root/series/title1/masked', [], ['volume10.cbz']),
                     ('/mock/root/series/title2', [], ['volume3.cbr', 'volume4.cbz'])
                 ]
             return []
