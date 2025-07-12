@@ -11,7 +11,8 @@ class Book(models.Model):
     isbn = models.CharField(max_length=13, blank=True, null=True, unique=True)
     series = models.ForeignKey('BookSeries', on_delete=models.SET_NULL, to_field='title', blank=True, null=True)
     file_path = models.TextField(default='d')
-    status = models.CharField(max_length=50, default='PENDING_SCAN') # Ex: PENDING_SCAN, SCANNED, METADATA_EXTRACTED, ENRICHED, READY
+    status = models.CharField(max_length=50, default='SCANNED') # SCANNED, PROCESSED
+
     # ... other metadata fields, processing status, etc.
     # Note: No direct link to the upscaled file here, access will be via the `upscale_processor_app` application.
 
