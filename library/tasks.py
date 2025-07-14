@@ -35,9 +35,13 @@ def initiate_library_scan_task(scan_books_directory_path: str | None, user_id: i
     assert scan_books_directory_path is not None
     available_bookseries_paths = localFileRepository.list_available_bookseries(scan_books_directory_path, [".cbz"])
     for single_series_path in available_bookseries_paths:
-        process_single_scanned_bookseries_task(single_series_path, user_id)
+        try:
+            process_single_scanned_bookseries_task(single_series_path, user_id)
+        except Exception as e:
+            logger.error(f"Error processing book series {single_series_path}: {e}")
 
     logger.info("Library scan completed")
+    return True
 
 @shared_task
 def process_single_scanned_bookseries_task(parent_bookseries_directory: str, user_id: int):
