@@ -1,26 +1,40 @@
+from django.http.response import JsonResponse
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
+from library.services.book_catalog_service import BookCatalogService  # Import inside the method
 
-class LibraryDashboardAPIView(APIView):
-    # Prototype: Handles the initial display of the dashboard/book list.
-    # Pre-conditions: GET request. User is authenticated. Optional query parameters for sorting/searching.
-    # Post-conditions: Returns an HTTP Response (200 OK) with the serialized list of books.
-    # **Relations:** Calls `BookCatalogService.get_dashboard_books()`.
-    def get(self, request: Request, *args, **kwargs) -> Response:
-        pass
+class LibraryDashboardBookSeriesAPIView(APIView):
+    '''
+    Prototype: Handles the initial display of the dashboard/book list.
+    Pre-conditions: GET request. User is authenticated. Optional query parameters for sorting/searching.
+    Post-conditions: Returns an HTTP Response (200 OK) with the serialized list of books.
+    **Relations:** Calls `BookCatalogService.get_dashboard_books()`.
+    '''
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request: Request, *args, **kwargs) -> JsonResponse:
+        bookCatalogService = BookCatalogService()
+        books = bookCatalogService.get_dashboard_books(None, {}, {}) #TODO: Implement pagination and filtering
+        try:
+            response = JsonResponse({'bookseries': list(books)})
+        except Exception as e:
+            response = JsonResponse({'An error occurred': str(e)}, status=500)
+        return response
 
 class LibraryRefreshAPIView(APIView):
-    # Prototype: Triggers the book catalog refresh process.
-    # Pre-conditions: POST request. User is authenticated. Optionally, 'scan_directory_path' in the body.
-    # Post-conditions: Returns HTTP Response (202 Accepted) if scan is launched. 400 Bad Request if validation fails.
-    # **Relations:** Calls `BookCatalogService.initiate_library_scan()`.
+    '''
+    Prototype: Triggers the book catalog refresh process.
+    Pre-conditions: POST request. User is authenticated. Optionally, 'scan_directory_path' in the body.
+    Post-conditions: Returns HTTP Response (202 Accepted) if scan is launched. 400 Bad Request if validation fails.
+    **Relations:** Calls `BookCatalogService.initiate_library_scan()`.
+    '''
 
     permission_classes = [IsAuthenticated]
 
     def post(self, request: Request, *args, **kwargs) -> Response:
-        from library.services.book_catalog_service import BookCatalogService  # Import inside the method
         bookCatalogService = BookCatalogService()
         bookCatalogService.initiate_library_scan(None, request.user.id)
         return Response({"content_type": "application/json", "message": "Scan launched successfully, please wait for the scan to complete."}, status=202)
@@ -34,7 +48,7 @@ class BookDetailAPIView:
     # Post-conditions: Returns HTTP Response (200 OK) with book details, or 404 Not Found.
     # **Relations:** Calls `BookCatalogService.get_book_details()`.
     def get(self, request: Request, pk: int, *args, **kwargs) -> Response:
-        pass
+        return Response({"message": "to implement"})
 
 class BookUpscaleRequestAPIView:
     # Prototype: Handles the request to launch an upscaling job for a given book.
@@ -43,4 +57,4 @@ class BookUpscaleRequestAPIView:
     #   400 Bad Request if invalid parameters or service business error. 404 Not Found if book not found.
     # **Relations:** Calls `BookCatalogService.request_book_upscale()`.
     def post(self, request: Request, *args, **kwargs) -> Response:
-        pass
+        return Response({"message": "to implement"})

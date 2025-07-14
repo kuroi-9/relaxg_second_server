@@ -1,6 +1,5 @@
-from django.db.models import QuerySet
 from library.models import Book, BookSeries
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 class BookDBRepository:
     def create_bookseries(self, data: Dict[str, Any]):
@@ -45,8 +44,7 @@ class BookDBRepository:
         Post-conditions: Returns the BookSeries instance or None if not found.
         '''
 
-        bookseries = BookSeries._default_manager.filter(directory_path=bookseries_filepath).first()
-        return bookseries
+        return BookSeries._default_manager.filter(directory_path=bookseries_filepath).first()
 
     def get_book_by_id(self, book_id: int) -> Book | None:
         '''
@@ -66,8 +64,22 @@ class BookDBRepository:
 
         return Book._default_manager.filter(file_path=file_path).first()
 
-    # Prototype: Retrieves filtered and sorted books.
-    # Pre-conditions: 'filters' is a dictionary of filter criteria, 'order_by' is a string for sorting.
-    # Post-conditions: Returns a QuerySet of matching Book objects, ready for pagination.
-    def get_books_with_filters_and_order(self, filters: Dict[str, Any], order_by: str) -> QuerySet[Book]:
-        pass
+    def get_bookseries_with_filters_and_order(self, filters: Dict[str, Any], order_by: str) -> List[BookSeries | None]:
+        '''
+        Retrieves bookseries filtered and ordered from the database.
+        Pre-conditions: 'filters' is a dictionary of filter criteria, 'order_by' is a string for sorting.
+        Post-conditions: Returns a QuerySet of matching BookSeries objects, ready for pagination.
+        '''
+
+        try:
+            return list(BookSeries._default_manager.filter(**filters).order_by(order_by).values())
+        except Exception as e:
+            raise Exception(f"Error fetching bookseries: {e}")
+
+    def get_books_with_filters_and_order(self, filters: Dict[str, Any], order_by: str) -> List[Book | None]:
+        '''
+        Retrieves books filtered and ordered from the database.
+        Pre-conditions: 'filters' is a dictionary of filter criteria, 'order_by' is a string for sorting.
+        Post-conditions: Returns a QuerySet of matching Book objects, ready for pagination.
+        '''
+        return Book._default_manager.filter(**filters).order_by(order_by).all()
