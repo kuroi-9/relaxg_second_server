@@ -2,16 +2,14 @@ import os
 from typing import List
 
 class LocalFileRepository:
-    """
-    LocalFileRepository class provides methods to interact with local files.
-    """
+    '''LocalFileRepository class provides methods to interact with local files.'''
 
     def list_available_bookseries(self, books_directory_path: str, extensions: List[str]) -> List[str]:
-        """
+        '''
         Prototype: Lists book series paths with certain extensions in a given directory (recursive).
         Pre-conditions: 'book_directory_path' is a valid path, 'extensions' is a list of formats (e.g., ['.cbz']).
         Post-conditions: Returns a list of absolute file paths. Raises FileNotFoundError if the directory doesn't exist
-        """
+        '''
 
         available_book_series = set()
         try:
@@ -28,9 +26,7 @@ class LocalFileRepository:
         return list(available_book_series)
 
     def list_available_volumes(self, parent_series_directory_path: str, extensions: List[str]) -> List[str]:
-        """
-        Lists all available volumes in a given directory.
-        """
+        '''Lists all available volumes in a given directory.'''
 
         available_volumes = []
         try:
@@ -44,14 +40,29 @@ class LocalFileRepository:
             raise FileNotFoundError(f"The directory '{parent_series_directory_path}' does not exist.")
         return available_volumes
 
-    # Prototype: Checks the existence and read accessibility of a file.
-    # Pre-conditions: 'file_path' is a file path.
-    # Post-conditions: Returns True if the file exists and is readable, False otherwise.
-    def file_exists(self, file_path: str) -> bool:
-        pass
 
-    # Prototype: Gets the size of a file in bytes.
-    # Pre-conditions: 'file_path' is the path of the file.
-    # Post-conditions: Returns an integer representing the file size. Raises FileNotFoundError if the file does not exist.
+    def file_exists(self, file_path: str) -> bool:
+        '''
+        Prototype: Checks the existence and read accessibility of a file.
+        Pre-conditions: 'file_path' is a file path.
+        Post-conditions: Returns True if the file exists and is readable, False otherwise. Means to be used from other files.
+        '''
+
+        try:
+            os.stat(file_path)
+            return True
+        except FileNotFoundError:
+            return False
+
+
     def get_file_size(self, file_path: str) -> int:
-        pass
+        '''
+        Prototype: Gets the size of a file in bytes.
+        Pre-conditions: 'file_path' is the path of the file.
+        Post-conditions: Returns an integer representing the file size. Raises FileNotFoundError if the file does not exist.
+        '''
+
+        try:
+            return os.path.getsize(file_path)
+        except FileNotFoundError:
+            raise FileNotFoundError(f"The file '{file_path}' does not exist.")
