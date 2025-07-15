@@ -1,1 +1,1 @@
-from .test_local_file_repository import *
+# Initializing directory as a module so the tests are loaded correctly
