@@ -3,6 +3,7 @@
 .ropeproject
 
 rg_server/__pycache__
+rg_server/migrations
 library/__pycache__
 library/migrations
 library/repositories/__pycache__
