@@ -1,5 +1,4 @@
 from django.db import models
-from django.conf import settings
 
 class Book(models.Model):
     # Prototype: Model that represents a book (most specifically a single volume) in the library.
@@ -24,10 +23,3 @@ class BookSeries(models.Model):
     description = models.TextField(blank=True, null=True)
     cover_image = models.ImageField(upload_to='series_covers/', blank=True, null=True)
     # ... other metadata fields, processing status, etc.
-
-class UserProfile(models.Model):
-    # Prototype: Model for user profiles, linked to the Django user.
-    # Pre-condition: None.
-    # Post-condition: Defines the structure of a user's profile.
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    # ... specific profile fields (e.g., default_scan_directory)
