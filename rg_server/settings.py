@@ -33,7 +33,6 @@ ALLOWED_HOSTS = []
 
 
 # Application definition
-
 INSTALLED_APPS = [
     'library.apps.LibraryConfig',
     'django.contrib.admin',
@@ -46,12 +45,14 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
+    'rg_server'
 ]
+
+AUTH_USER_MODEL = 'rg_server.CommonUser'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
             'rg_server.authenticate.JWTCookieAuthentication',
-            # 'rest_framework.authentication.SessionAuthentication',
         ),
 }
 

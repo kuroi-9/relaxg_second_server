@@ -1,17 +1,17 @@
 from rest_framework import serializers
-from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 from rest_framework_simplejwt.exceptions import InvalidToken
 
-User = get_user_model();
+from rg_server.models import CommonUser
 
-class UserSerializer(serializers.ModelSerializer):
+class CommonUserSerializer(serializers.ModelSerializer):
     """
     Serialize User informations
     """
+
     class Meta:
-        model = User
-        fields = ('id', 'username', 'email', 'first_name', 'last_name')
+        model = CommonUser
+        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'scan_directory')
         read_only_fields = ('username', 'email')
 
 class CustomTokenRefreshSerializer(TokenRefreshSerializer):

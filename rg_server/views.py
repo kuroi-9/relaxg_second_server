@@ -12,7 +12,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import ensure_csrf_cookie
 
 # Custom serializer
-from .serializers import UserSerializer
+from .serializers import CommonUserSerializer
 
 @ensure_csrf_cookie
 def get_csrf_token(request):
@@ -50,7 +50,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
         # Retrieve the authenticated user to send their information to the frontend
         user = serializer.user
-        user_data = UserSerializer(user).data
+        user_data = CommonUserSerializer(user).data
 
         response = Response({'user': user_data}, status=status.HTTP_200_OK)
 
@@ -150,7 +150,7 @@ class UserMeView(RetrieveAPIView):
     Requires a valid Access Token.
     """
     permission_classes = (IsAuthenticated,)  # Protected, requires a valid JWT
-    serializer_class = UserSerializer
+    serializer_class = CommonUserSerializer
 
     def get_object(self):
         # request.user is automatically set by JWTAuthentication if the token is valid
