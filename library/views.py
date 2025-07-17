@@ -4,14 +4,17 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from library.services.book_catalog_service import BookCatalogService  # Import inside the method
+from library.services.user_profile_service import UserProfileService
+import json
+
 
 class LibraryDashboardBookSeriesAPIView(APIView):
-    '''
+    """
     Prototype: Handles the initial display of the dashboard/book list.
     Pre-conditions: GET request. User is authenticated. Optional query parameters for sorting/searching.
     Post-conditions: Returns an HTTP Response (200 OK) with the serialized list of books.
     **Relations:** Calls `BookCatalogService.get_dashboard_books()`.
-    '''
+    """
 
     permission_classes = [IsAuthenticated]
 
@@ -25,12 +28,12 @@ class LibraryDashboardBookSeriesAPIView(APIView):
         return response
 
 class LibraryRefreshAPIView(APIView):
-    '''
+    """
     Prototype: Triggers the book catalog refresh process.
     Pre-conditions: POST request. User is authenticated. Optionally, 'scan_directory_path' in the body.
     Post-conditions: Returns HTTP Response (202 Accepted) if scan is launched. 400 Bad Request if validation fails.
     **Relations:** Calls `BookCatalogService.initiate_library_scan()`.
-    '''
+    """
 
     permission_classes = [IsAuthenticated]
 
@@ -49,6 +52,29 @@ class BookDetailAPIView:
     # **Relations:** Calls `BookCatalogService.get_book_details()`.
     def get(self, request: Request, pk: int, *args, **kwargs) -> Response:
         return Response({"message": "to implement"})
+
+class UserLibraryPreferencesAPIView(APIView):
+    """
+    Prototype: Handles the request to display the preferences of a specific user regarding the library.
+    Pre-conditions: GET request with 'pk' (user ID) in the URL.
+    Post-conditions: Returns HTTP Response (200 OK) with user library preferences, or 404 Not Found.
+    **Relations:** Calls `BookCatalogService.get_user_library_preferences()`.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request: Request, *args, **kwargs) -> JsonResponse:
+        user_preferences_service = UserProfileService()
+        preferences = user_preferences_service.get_user_preferences(request.user.id)
+        return JsonResponse({"preferences": preferences})
+
+    def put(self, request: Request, *args, **kwargs) -> JsonResponse:
+        user_preferences_service = UserProfileService()
+        Dict = dict
+        user_preferences = Dict(json.loads(request.body))
+
+        # Find a better way to ensure the user preferences have been updated successfully
+        isUpdated = user_preferences_service.update_user_preferences(request.user.id, user_preferences.get('preferences', {}))
+        return JsonResponse({"is_updated": isUpdated})
 
 class BookUpscaleRequestAPIView:
     # Prototype: Handles the request to launch an upscaling job for a given book.
