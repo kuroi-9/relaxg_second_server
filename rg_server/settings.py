@@ -24,12 +24,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-o2i+v%(x@4d)#*)c!=w$9m@00u*vzr=n+#^egvy8+5(ca5%g0&'
+SECRET_KEY = 'wellitsdevonly'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "localhost",
+    "100.80.79.15",
+]
 
 
 # Application definition
@@ -55,6 +58,8 @@ REST_FRAMEWORK = {
             'rg_server.authenticate.JWTCookieAuthentication',
         ),
 }
+
+CSRF_COOKIE_SAMESITE = 'Lax'
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),  # Short lifetime for Access Token (e.g., 5 minutes)
@@ -90,14 +95,20 @@ SIMPLE_JWT = {
     'AUTH_COOKIE_DOMAIN': None, # Set for subdomains if needed (e.g., '.yourdomain.com')
     'AUTH_COOKIE_SECURE': False, # **SET TO TRUE IN PRODUCTION (REQUIRES HTTPS)!**
     'AUTH_COOKIE_HTTP_ONLY': True, # Prevents JavaScript access to the cookie
-    'AUTH_COOKIE_SAMESITE': 'Lax', # 'Lax' or 'Strict' for CSRF protection. 'None' requires 'Secure: True'.
+
+    # 'Lax' or 'Strict' IN PRODUCTION.
+    # Use None if you want to allow cross-site requests (e.g. dev over network)
+    'AUTH_COOKIE_SAMESITE': None,
 
     # Cookie name for the Refresh Token
     'AUTH_COOKIE_REFRESH': 'refresh_token',
     'AUTH_COOKIE_REFRESH_DOMAIN': None,
     'AUTH_COOKIE_REFRESH_SECURE': False, # **SET TO TRUE IN PRODUCTION (REQUIRES HTTPS)!**
     'AUTH_COOKIE_REFRESH_HTTP_ONLY': True,
-    'AUTH_COOKIE_REFRESH_SAMESITE': 'Lax',
+
+    # 'Lax' or 'Strict' IN PRODUCTION.
+    # Use None if you want to allow cross-site requests (e.g. dev over network)
+    'AUTH_COOKIE_REFRESH_SAMESITE': None,
 }
 
 MIDDLEWARE = [
@@ -113,9 +124,11 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
+    "http://100.80.79.15:5173",
     "http://localhost:4173",
+    "http://100.80.79.15:4173",
 ]
-# CORS_ALLOW_ALL_ORIGINS = True
+#CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOW_HEADERS = [
