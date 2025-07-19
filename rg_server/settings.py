@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'wellitsdevonly'
+SECRET_KEY = config('SIGNING_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -58,8 +58,7 @@ REST_FRAMEWORK = {
             'rg_server.authenticate.JWTCookieAuthentication',
         ),
 }
-
-CSRF_COOKIE_SAMESITE = None # Set to None for cross-site requests IN DEVELOPMENT ONLY (e.g., dev forms over the network)
+CSRF_COOKIE_SAMESITE = config('COOKIE_SAMESITE_MODE')  # Set to None for cross-site requests IN DEVELOPMENT ONLY (e.g., dev forms over the network)
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),  # Short lifetime for Access Token (e.g., 5 minutes)
@@ -98,7 +97,7 @@ SIMPLE_JWT = {
 
     # 'Lax' or 'Strict' IN PRODUCTION.
     # Use None if you want to allow cross-site requests (e.g. dev over network)
-    'AUTH_COOKIE_SAMESITE': None,
+    'AUTH_COOKIE_SAMESITE': config('COOKIE_SAMESITE_MODE'),
 
     # Cookie name for the Refresh Token
     'AUTH_COOKIE_REFRESH': 'refresh_token',
@@ -108,7 +107,8 @@ SIMPLE_JWT = {
 
     # 'Lax' or 'Strict' IN PRODUCTION.
     # Use None if you want to allow cross-site requests (e.g. dev over network)
-    'AUTH_COOKIE_REFRESH_SAMESITE': None,
+    'AUTH_COOKIE_REFRESH_SAMESITE': config('COOKIE_SAMESITE_MODE'),
+
 }
 
 MIDDLEWARE = [
