@@ -2,6 +2,18 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.conf import settings
 from rest_framework import exceptions
 
+from rg_server.models import CommonUser
+
+class EmailAuthBackend:
+    def authenticate(self, request, username=None, password=None):
+        user = CommonUser.objects.get(email=username)
+        if not user.is_active:
+            raise exceptions.AuthenticationFailed('User account is disabled.')
+
+        if user.check_password(password):
+            return user
+        return None
+
 class JWTCookieAuthentication(JWTAuthentication):
     def authenticate(self, request):
         header = self.get_header(request)

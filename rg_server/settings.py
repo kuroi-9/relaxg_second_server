@@ -58,6 +58,9 @@ REST_FRAMEWORK = {
             'rg_server.authenticate.JWTCookieAuthentication',
         ),
 }
+
+AUTHENTICATION_BACKENDS = ['rg_server.authenticate.EmailAuthBackend',]
+
 CSRF_COOKIE_SAMESITE = config('COOKIE_SAMESITE_MODE')  # Set to None for cross-site requests IN DEVELOPMENT ONLY (e.g., dev forms over the network)
 
 SIMPLE_JWT = {
