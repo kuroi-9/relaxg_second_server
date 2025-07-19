@@ -59,7 +59,7 @@ REST_FRAMEWORK = {
         ),
 }
 
-CSRF_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SAMESITE = None # Set to None for cross-site requests IN DEVELOPMENT ONLY (e.g., dev forms over the network)
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),  # Short lifetime for Access Token (e.g., 5 minutes)
