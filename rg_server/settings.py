@@ -37,6 +37,7 @@ ALLOWED_HOSTS = [
 
 # Application definition
 INSTALLED_APPS = [
+    'channels',
     'library.apps.LibraryConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -48,7 +49,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
-    'rg_server'
+    'rg_server',
 ]
 
 AUTH_USER_MODEL = 'rg_server.CommonUser'
@@ -60,6 +61,17 @@ REST_FRAMEWORK = {
 }
 
 AUTHENTICATION_BACKENDS = ['rg_server.authenticate.EmailAuthBackend',]
+
+ASGI_APPLICATION = "rg_server.asgi.application"
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
 
 CSRF_COOKIE_SAMESITE = config('COOKIE_SAMESITE_MODE')  # Set to None for cross-site requests IN DEVELOPMENT ONLY (e.g., dev forms over the network)
 
