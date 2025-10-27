@@ -1,0 +1,38 @@
+version: "3.8"
+
+services:
+    db:
+        image: postgres:18 # Change version number
+        restart: unless-stopped
+        environment:
+            - POSTGRES_USER=example_user
+            - POSTGRES_PASSWORD=example_password
+            - POSTGRES_DB=example_db
+        ports:
+            - "5432:5432"
+        volumes:
+            # IMPORTANT: The PGDATA path is now version-specific in the official image
+            - ./db:/var/lib/postgresql
+        networks:
+            - relaxg_second_server_default
+
+    web:
+        build: .
+        ports:
+            - "8000:8000"
+        volumes:
+            - .:/app
+        environment:
+            - PYTHONDONTWRITEBYTECODE=1
+            - PYTHONUNBUFFERED=1
+        command: python manage.py runserver 0.0.0.0:8000
+        networks:
+            - relaxg_second_server_default
+
+volumes:
+    pgdata:
+
+networks:
+    relaxg_second_server_default:
+        name: relaxg_second_server_default
+        driver: bridge
