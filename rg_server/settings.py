@@ -29,8 +29,8 @@ SECRET_KEY = config("SIGNING_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# Don't use 127.0.0.1, nor allow it
 ALLOWED_HOSTS = ["localhost", "100.80.79.15", "0.0.0.0"]
-
 
 # Application definition
 INSTALLED_APPS = [
