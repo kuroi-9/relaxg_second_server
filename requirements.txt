@@ -4,7 +4,6 @@ channels
 djangorestframework
 djangorestframework-simplejwt
 django-cors-headers
-pymysql
-mysqlclient
 celery
 pillow
+psycopg2-binary
