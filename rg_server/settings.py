@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
-from decouple import config;
+from decouple import config
 from datetime import timedelta
 
 BOOKS_DIR = "/home/loicd/Documents/Mangas/Completed/"
@@ -24,43 +24,42 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SIGNING_KEY')
+SECRET_KEY = config("SIGNING_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    "localhost",
-    "100.80.79.15",
-]
+ALLOWED_HOSTS = ["localhost", "100.80.79.15", "0.0.0.0"]
 
 
 # Application definition
 INSTALLED_APPS = [
-    'channels',
-    'library.apps.LibraryConfig',
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'rest_framework',
-    'rest_framework_simplejwt',
-    'rest_framework_simplejwt.token_blacklist',
-    'corsheaders',
-    'rg_server',
+    "channels",
+    "library.apps.LibraryConfig",
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "rest_framework",
+    "rest_framework_simplejwt",
+    "rest_framework_simplejwt.token_blacklist",
+    "corsheaders",
+    "rg_server",
 ]
 
-AUTH_USER_MODEL = 'rg_server.CommonUser'
+AUTH_USER_MODEL = "rg_server.CommonUser"
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-            'rg_server.authenticate.JWTCookieAuthentication',
-        ),
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rg_server.authenticate.JWTCookieAuthentication",
+    ),
 }
 
-AUTHENTICATION_BACKENDS = ['rg_server.authenticate.EmailAuthBackend',]
+AUTHENTICATION_BACKENDS = [
+    "rg_server.authenticate.EmailAuthBackend",
+]
 
 ASGI_APPLICATION = "rg_server.asgi.application"
 
@@ -73,68 +72,65 @@ CHANNEL_LAYERS = {
     },
 }
 
-CSRF_COOKIE_SAMESITE = config('COOKIE_SAMESITE_MODE')  # Set to None for cross-site requests IN DEVELOPMENT ONLY (e.g., dev forms over the network)
+CSRF_COOKIE_SAMESITE = config(
+    "COOKIE_SAMESITE_MODE"
+)  # Set to None for cross-site requests IN DEVELOPMENT ONLY (e.g., dev forms over the network)
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),  # Short lifetime for Access Token (e.g., 5 minutes)
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),   # Longer lifetime for Refresh Token (e.g., 7 days)
-
-    'ROTATE_REFRESH_TOKENS': True, # Highly recommended: a new Refresh Token is issued with each refresh
-    'BLACKLIST_AFTER_ROTATION': True, # Invalidates the old Refresh Token after rotation
-
-    'UPDATE_LAST_LOGIN': False, # Set to True if you want to update the user's last_login field
-
-    'ALGORITHM': 'HS256', # Signature algorithm
-    'SIGNING_KEY': SECRET_KEY, # **USE YOUR DJANGO SECRET_KEY**, never expose it!
-    'VERIFYING_KEY': None,
-    'AUDIENCE': None,
-    'ISSUER': None,
-    'JWK_URL': None,
-    'LEEWAY': 0,
-
-    'AUTH_HEADER_TYPES': ('Bearer',), # Header type (e.g., Authorization: Bearer <token>)
-    'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
-    'USER_ID_FIELD': 'id',
-    'USER_ID_CLAIM': 'user_id',
-    'USER_AUTHENTICATION_RULE': 'rest_framework_simplejwt.authentication.default_user_authentication_rule',
-
-    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
-    'TOKEN_TYPE_CLAIM': 'token_type',
-    'TOKEN_USER_CLASS': 'rest_framework_simplejwt.models.TokenUser',
-
-    'JTI_CLAIM': 'jti',
-
+    "ACCESS_TOKEN_LIFETIME": timedelta(
+        minutes=5
+    ),  # Short lifetime for Access Token (e.g., 5 minutes)
+    "REFRESH_TOKEN_LIFETIME": timedelta(
+        days=7
+    ),  # Longer lifetime for Refresh Token (e.g., 7 days)
+    "ROTATE_REFRESH_TOKENS": True,  # Highly recommended: a new Refresh Token is issued with each refresh
+    "BLACKLIST_AFTER_ROTATION": True,  # Invalidates the old Refresh Token after rotation
+    "UPDATE_LAST_LOGIN": False,  # Set to True if you want to update the user's last_login field
+    "ALGORITHM": "HS256",  # Signature algorithm
+    "SIGNING_KEY": SECRET_KEY,  # **USE YOUR DJANGO SECRET_KEY**, never expose it!
+    "VERIFYING_KEY": None,
+    "AUDIENCE": None,
+    "ISSUER": None,
+    "JWK_URL": None,
+    "LEEWAY": 0,
+    "AUTH_HEADER_TYPES": (
+        "Bearer",
+    ),  # Header type (e.g., Authorization: Bearer <token>)
+    "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
+    "USER_ID_FIELD": "id",
+    "USER_ID_CLAIM": "user_id",
+    "USER_AUTHENTICATION_RULE": "rest_framework_simplejwt.authentication.default_user_authentication_rule",
+    "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
+    "TOKEN_TYPE_CLAIM": "token_type",
+    "TOKEN_USER_CLASS": "rest_framework_simplejwt.models.TokenUser",
+    "JTI_CLAIM": "jti",
     # HTTP-only
-    'AUTH_COOKIE': 'access_token',
-    'AUTH_COOKIE_DOMAIN': None, # Set for subdomains if needed (e.g., '.yourdomain.com')
-    'AUTH_COOKIE_SECURE': False, # **SET TO TRUE IN PRODUCTION (REQUIRES HTTPS)!**
-    'AUTH_COOKIE_HTTP_ONLY': True, # Prevents JavaScript access to the cookie
-
+    "AUTH_COOKIE": "access_token",
+    "AUTH_COOKIE_DOMAIN": None,  # Set for subdomains if needed (e.g., '.yourdomain.com')
+    "AUTH_COOKIE_SECURE": False,  # **SET TO TRUE IN PRODUCTION (REQUIRES HTTPS)!**
+    "AUTH_COOKIE_HTTP_ONLY": True,  # Prevents JavaScript access to the cookie
     # 'Lax' or 'Strict' IN PRODUCTION.
     # Use None if you want to allow cross-site requests (e.g. dev over network)
-    'AUTH_COOKIE_SAMESITE': config('COOKIE_SAMESITE_MODE'),
-
+    "AUTH_COOKIE_SAMESITE": config("COOKIE_SAMESITE_MODE"),
     # Cookie name for the Refresh Token
-    'AUTH_COOKIE_REFRESH': 'refresh_token',
-    'AUTH_COOKIE_REFRESH_DOMAIN': None,
-    'AUTH_COOKIE_REFRESH_SECURE': False, # **SET TO TRUE IN PRODUCTION (REQUIRES HTTPS)!**
-    'AUTH_COOKIE_REFRESH_HTTP_ONLY': True,
-
+    "AUTH_COOKIE_REFRESH": "refresh_token",
+    "AUTH_COOKIE_REFRESH_DOMAIN": None,
+    "AUTH_COOKIE_REFRESH_SECURE": False,  # **SET TO TRUE IN PRODUCTION (REQUIRES HTTPS)!**
+    "AUTH_COOKIE_REFRESH_HTTP_ONLY": True,
     # 'Lax' or 'Strict' IN PRODUCTION.
     # Use None if you want to allow cross-site requests (e.g. dev over network)
-    'AUTH_COOKIE_REFRESH_SAMESITE': config('COOKIE_SAMESITE_MODE'),
-
+    "AUTH_COOKIE_REFRESH_SAMESITE": config("COOKIE_SAMESITE_MODE"),
 }
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware', # Order matters! It should be called soon enough to be able to place its headers
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",  # Order matters! It should be called soon enough to be able to place its headers
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
 CORS_ALLOWED_ORIGINS = [
@@ -143,13 +139,13 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:4173",
     "http://100.80.79.15:4173",
 ]
-#CORS_ALLOW_ALL_ORIGINS = True
+# CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOW_HEADERS = [
     "accept",
     "accept-encoding",
-    "authorization", # This is essential for the "Authorization: Bearer <token>" header
+    "authorization",  # This is essential for the "Authorization: Bearer <token>" header
     "content-type",
     "dnt",
     "origin",
@@ -158,37 +154,37 @@ CORS_ALLOW_HEADERS = [
     "x-requested-with",
 ]
 
-ROOT_URLCONF = 'rg_server.urls'
+ROOT_URLCONF = "rg_server.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'rg_server.wsgi.application'
+WSGI_APPLICATION = "rg_server.wsgi.application"
 
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': config('DB_NAME'),
-        'USER': config('DB_USER'),
-        'PASSWORD': config('DB_PASSWORD'),
-        'HOST': config('DB_HOST'),
-        'PORT': config('DB_PORT'),
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": config("DB_NAME"),
+        "USER": config("DB_USER"),
+        "PASSWORD": config("DB_PASSWORD"),
+        "HOST": config("DB_HOST"),
+        "PORT": config("DB_PORT"),
     }
 }
 
@@ -198,16 +194,16 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
@@ -215,9 +211,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = "UTC"
 
 USE_I18N = True
 
@@ -227,9 +223,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = "static/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
