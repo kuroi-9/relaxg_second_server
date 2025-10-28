@@ -22,6 +22,7 @@ services:
             - "8000:8000"
         volumes:
             - .:/app
+            - ${BOOKS_DIR}:/books
         environment:
             - PYTHONDONTWRITEBYTECODE=1
             - PYTHONUNBUFFERED=1
