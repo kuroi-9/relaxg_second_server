@@ -30,7 +30,11 @@ SECRET_KEY = config("SIGNING_KEY")
 DEBUG = True
 
 # Don't use 127.0.0.1, nor allow it
-ALLOWED_HOSTS = ["localhost", "100.80.79.15", "0.0.0.0"]
+# config("VPS_IP_ADRESS") is the VPS (tailscale)
+# "0.0.0.0" is the network gateway
+# These VPS_IP_ADRESS and "0.0.0.0" will be used together if serving to 0.0.0.0
+# using "python manage.py runserver 0.0.0.0"
+ALLOWED_HOSTS = ["localhost", config("VPS_IP_ADRESS"), "0.0.0.0"]
 
 # Application definition
 INSTALLED_APPS = [
@@ -138,6 +142,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://100.80.79.15:5173",
     "http://localhost:4173",
     "http://100.80.79.15:4173",
+    "http://100.100.200.44:5173",
 ]
 # CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True

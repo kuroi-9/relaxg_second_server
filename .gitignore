@@ -2,6 +2,7 @@
 .venv
 .ropeproject
 .zed
+db
 
 rg_server/__pycache__
 rg_server/migrations
