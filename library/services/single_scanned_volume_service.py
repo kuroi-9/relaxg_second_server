@@ -31,7 +31,8 @@ class SingleScannedVolumeService:
                 self.book_db_repository.create_bookseries(
                     {
                         "directory_path": parent_bookseries_directory,
-                        "title": parent_bookseries_directory,
+                        "title": parent_bookseries_directory.split("/")[-2],
+                        "cover_image": "/images/" + parent_bookseries_directory.split("/")[-2].replace(" ", "_") + "_cover.jpg"
                     }
                 )
             except Exception as e:
@@ -47,6 +48,8 @@ class SingleScannedVolumeService:
                     {
                         "file_path": file_path,
                         "series": bookSeries,
+                        "title": file_path.split("/")[-1].split(".")[0],
+                        "status": "none"
                     }
                 )
             except Exception as e:
