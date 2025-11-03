@@ -46,6 +46,15 @@ class BookDBRepository:
 
         return BookSeries._default_manager.filter(directory_path=bookseries_filepath).first()
 
+    def get_bookseries_books(self, bookseries_title: str) -> List[Book]:
+        '''
+        Retrieves all books associated with a book series from the database.
+        Pre-conditions: 'bookseries_title' is the title of the book series.
+        Post-conditions: Returns a list of Book instances.
+        '''
+
+        return Book._default_manager.filter(series=bookseries_title).all().order_by('title')
+
     def get_book_by_id(self, book_id: int) -> Book | None:
         '''
         Retrieves a book by its ID from the database.

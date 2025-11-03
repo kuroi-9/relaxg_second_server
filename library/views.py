@@ -48,6 +48,27 @@ class LibraryDashboardBookSeriesCoversAPIView(APIView):
             response = JsonResponse({'An error occurred': str(e)}, status=500)
         return response
 
+class LibraryBookseriesBooksAPIView(APIView):
+    """
+    Prototype: Retrieves a list of books belonging to a specific book series.
+    Pre-conditions: GET request with 'bookseries_title' (book series title) in the URL.
+    Post-conditions: Returns HTTP Response (200 OK) with a list of books, or 404 Not Found.
+    **Relations:** Calls `BookCatalogService.get_books_by_bookseries_title()`.
+    """
+
+    permission_classes = [IsAuthenticated]
+    def get(self, request: Request, bookseries_title: str, *args, **kwargs) -> Response:
+        from library.serializers import BookListSerializer
+
+        bookCatalogService = BookCatalogService()
+        books = bookCatalogService.get_books_by_bookseries_title(bookseries_title)
+        serialized_books = BookListSerializer(books, many=True)
+        try:
+            serialized_books.data
+            response = Response(serialized_books.data, status=200)
+        except Exception as e:
+            response = JsonResponse({'An error occurred': str(e)}, status=500)
+        return response
 
 class LibraryRefreshAPIView(APIView):
     """

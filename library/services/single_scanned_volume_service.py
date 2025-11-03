@@ -57,7 +57,7 @@ class SingleScannedVolumeService:
                         {
                             "file_path": file_path,
                             "series": bookSeries,
-                            "title": file_path.split("/")[-1].split(".")[0],
+                            "title": file_path.split("/")[-1].rsplit(".", 1)[0],
                             "status": "none"
                         }
                     )

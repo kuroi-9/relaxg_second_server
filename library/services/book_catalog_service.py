@@ -36,6 +36,20 @@ class BookCatalogService:
         except ValueError as e:
             raise ValueError(f"Invalid sort/search parameters: {e}")
 
+    def get_books_by_bookseries_title(self, bookseries_title: str) -> List[Book]:
+        '''
+        Retrieves all books associated with a book series from the database.
+        Pre-conditions: 'bookseries_title' is the title of the book series.
+        Post-conditions: Returns a list of Book instances.
+        **Relations:** Calls `get_bookseries_books()`.
+
+        '''
+
+        try:
+            return self.bookDBRepository.get_bookseries_books(bookseries_title)
+        except ValueError as e:
+            raise ValueError(f"Invalid book series title: {e}")
+
     def initiate_library_scan(self, scan_books_directory_path: str | None, user_id: int) -> bool:
         '''
         Prototype: Trigger analysis and update of the book database.
