@@ -32,40 +32,49 @@ class SingleScannedVolumeService:
                     {
                         "directory_path": parent_bookseries_directory,
                         "title": parent_bookseries_directory.split("/")[-2],
-                        "cover_image": "/images/" + parent_bookseries_directory.split("/")[-2].replace(" ", "_") + "_cover.jpg"
+                        "cover_image": "/covers/" + parent_bookseries_directory.split("/")[-2].replace(" ", "_") + "_cover.jpg"
                     }
                 )
             except Exception as e:
                 raise Exception(
-                    f"Failed to create book series {parent_bookseries_directory}: {e}"
+                    f"Failed to create bookseries {parent_bookseries_directory}: {e}"
                 )
 
-        # Checking if the book exists
-        volume = self.book_db_repository.get_volume_by_file_path(file_path)
-        if volume is None:
-            try:
-                self.book_db_repository.create_book(
-                    {
-                        "file_path": file_path,
-                        "series": bookSeries,
-                        "title": file_path.split("/")[-1].split(".")[0],
-                        "status": "none"
-                    }
-                )
-            except Exception as e:
-                raise Exception(f"Failed to create book {file_path}: {e}")
 
+        bookSeries = self.book_db_repository.get_bookseries_by_filepath(
+            parent_bookseries_directory
+        )
+        if bookSeries is None:
+            raise Exception(
+                f"Failed to find bookseries {parent_bookseries_directory}"
+            )
         else:
-            try:
-                self.book_db_repository.update_book(
-                    volume,
-                    {  # Book ID will be checked in the repository
-                        "file_path": file_path,
-                        "series": bookSeries,
-                    },
-                )
-            except Exception as e:
-                raise Exception(f"Failed to update book {file_path}: {e}")
+            # Checking if the book exists
+            volume = self.book_db_repository.get_volume_by_file_path(file_path)
+            if volume is None:
+                try:
+                    self.book_db_repository.create_book(
+                        {
+                            "file_path": file_path,
+                            "series": bookSeries,
+                            "title": file_path.split("/")[-1].split(".")[0],
+                            "status": "none"
+                        }
+                    )
+                except Exception as e:
+                    raise Exception(f"Failed to create book {file_path}: {e}")
 
-        # If no exception raised, return True
+            else:
+                try:
+                    self.book_db_repository.update_book(
+                        volume,
+                        {  # Book ID will be checked in the repository
+                            "file_path": file_path,
+                            "series": bookSeries,
+                        },
+                    )
+                except Exception as e:
+                    raise Exception(f"Failed to update book {file_path}: {e}")
+
+            # If no exception raised, return True
         return True

@@ -23,6 +23,7 @@ services:
         volumes:
             - .:/app
             - ${BOOKS_DIR}:/books
+            - ${BOOKS_DIR}/covers:/covers
         environment:
             - PYTHONDONTWRITEBYTECODE=1
             - PYTHONUNBUFFERED=1

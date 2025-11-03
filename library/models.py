@@ -21,5 +21,5 @@ class BookSeries(models.Model):
     title = models.CharField(max_length=255, unique=True, default='')
     directory_path = models.TextField(default='')
     description = models.TextField(blank=True, null=True)
-    cover_image = models.ImageField(upload_to='series_covers/', blank=True, null=True)
+    cover_image = models.TextField(blank=True, null=True)
     # ... other metadata fields, processing status, etc.

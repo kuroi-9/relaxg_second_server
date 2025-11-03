@@ -1,4 +1,5 @@
 from django.http.response import JsonResponse
+from django.http import FileResponse
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -26,6 +27,27 @@ class LibraryDashboardBookSeriesAPIView(APIView):
         except Exception as e:
             response = JsonResponse({'An error occurred': str(e)}, status=500)
         return response
+
+class LibraryDashboardBookSeriesCoversAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request: Request, *args, **kwargs) -> JsonResponse:
+        import os
+        from django.conf import settings
+
+        cover_path = request.GET.get('cover_path', None)
+        if not cover_path:
+            return JsonResponse({'error': 'Missing required parameter: bookname'}, status=400)
+
+        try:
+            if os.path.isfile(cover_path):
+                response = FileResponse(open(cover_path, 'rb'), content_type='image/jpeg')
+            else:
+                response = JsonResponse({'error': f'Cover not found for book: {book_name}'}, status=404)
+        except Exception as e:
+            response = JsonResponse({'An error occurred': str(e)}, status=500)
+        return response
+
 
 class LibraryRefreshAPIView(APIView):
     """
