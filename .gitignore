@@ -11,3 +11,8 @@ library/migrations
 library/repositories/__pycache__
 library/services/__pycache__
 library/tests/__pycache__
+jobs_manager/__pycache__
+jobs_manager/migrations
+jobs_manager/repositories/__pycache__
+jobs_manager/services/__pycache__
+jobs_manager/tests/__pycache__
