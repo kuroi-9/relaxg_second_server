@@ -1,18 +1,18 @@
 from celery import shared_task
+from django.conf import settings
 
-# Import du repository local_file_repository
-from library.repositories.local_file_repository import LocalFileRepository
+# Import du repository local_files_repository
+from library.repositories.local_files_repository import localFilesRepository
 
 # Import du repository user_profile_repository pour obtenir le répertoire par défaut
 # from library.repositories.user_profile_repository import UserProfileRepository
-from library.repositories.book_db_repository import BookDBRepository
+from library.repositories.books_db_repository import BooksDBRepository
 from library.services.single_scanned_volume_service import SingleScannedVolumeService
 import logging
-# from django.conf import settings
 
 logger = logging.getLogger(__name__)
-localFileRepository = LocalFileRepository()
-bookDBRepository = BookDBRepository()
+localFilesRepository = localFilesRepository()
+booksDBRepository = BooksDBRepository()
 singleScannedVolumeService = SingleScannedVolumeService()
 
 
@@ -25,8 +25,8 @@ def initiate_library_scan_task(scan_books_directory_path: str | None, user_id: i
     - Triggers 'process_single_scanned_series_task' for each new/updated file found.
     - Logs the start and end of the scan.
     - Handles errors at the global scan level (e.g., inaccessible directory).
-    **Relations:** Called by `BookCatalogService.initiate_library_scan()`.
-      Interacts with `LocalFileRepository.list_available_bookseries()`.
+    **Relations:** Called by `BooksCatalogService.initiate_library_scan()`.
+      Interacts with `localFilesRepository.list_available_bookseries()`.
       Calls `process_single_scanned_series_task()` for each file.
     """
 
@@ -36,10 +36,10 @@ def initiate_library_scan_task(scan_books_directory_path: str | None, user_id: i
     #     scan_books_directory_path = books_default_directory
     #
     # WIP: Setting moved in .env
-    scan_books_directory_path = "/books/"
+    scan_books_directory_path = scan_books_directory_path if scan_books_directory_path is not None else settings.BOOKS_DIR
 
     assert scan_books_directory_path is not None
-    available_bookseries_paths = localFileRepository.list_available_bookseries(
+    available_bookseries_paths = localFilesRepository.list_available_bookseries(
         scan_books_directory_path, [".cbz"]
     )
     for single_series_path in available_bookseries_paths:
@@ -64,10 +64,10 @@ def process_single_scanned_bookseries_task(
     - Updates book status based on processing success or failure. TODO: Find another way to handle errors
     - Logs results for each book.
     **Relations:** Called by `initiate_library_scan_task`.
-      Calls `BookCatalogService.process_scanned_book()`.
+      Calls `BooksCatalogService.process_scanned_book()`.
     """
 
-    volumes = localFileRepository.list_available_volumes(
+    volumes = localFilesRepository.list_available_volumes(
         parent_bookseries_directory, [".cbz"]
     )
     for volume in volumes:

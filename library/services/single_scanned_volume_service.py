@@ -1,13 +1,13 @@
-from library.repositories.local_file_repository import LocalFileRepository
-from library.repositories.book_db_repository import BookDBRepository
+from library.repositories.local_files_repository import localFilesRepository
+from library.repositories.books_db_repository import BooksDBRepository
 
 
 class SingleScannedVolumeService:
     def __init__(
-        self, local_file_repo=LocalFileRepository, book_db_repo=BookDBRepository
+        self, local_files_repo=localFilesRepository, books_db_repo=BooksDBRepository
     ):
-        self.local_file_repository = local_file_repo()
-        self.book_db_repository = book_db_repo()
+        self.local_files_repository = local_files_repo()
+        self.books_db_repository = books_db_repo()
 
     def process_single_scanned_volume(
         self, file_path: str, user_id: int, parent_bookseries_directory: str
@@ -23,12 +23,12 @@ class SingleScannedVolumeService:
             bool: True if the volume was scanned successfully, False otherwise.
         """
 
-        bookSeries = self.book_db_repository.get_bookseries_by_filepath(
+        bookSeries = self.books_db_repository.get_bookseries_by_filepath(
             parent_bookseries_directory
         )
         if bookSeries is None:
             try:
-                self.book_db_repository.create_bookseries(
+                self.books_db_repository.create_bookseries(
                     {
                         "directory_path": parent_bookseries_directory,
                         "title": parent_bookseries_directory.split("/")[-2],
@@ -41,7 +41,7 @@ class SingleScannedVolumeService:
                 )
 
 
-        bookSeries = self.book_db_repository.get_bookseries_by_filepath(
+        bookSeries = self.books_db_repository.get_bookseries_by_filepath(
             parent_bookseries_directory
         )
         if bookSeries is None:
@@ -50,10 +50,10 @@ class SingleScannedVolumeService:
             )
         else:
             # Checking if the book exists
-            volume = self.book_db_repository.get_volume_by_file_path(file_path)
+            volume = self.books_db_repository.get_volume_by_file_path(file_path)
             if volume is None:
                 try:
-                    self.book_db_repository.create_book(
+                    self.books_db_repository.create_book(
                         {
                             "file_path": file_path,
                             "series": bookSeries,
@@ -66,7 +66,7 @@ class SingleScannedVolumeService:
 
             else:
                 try:
-                    self.book_db_repository.update_book(
+                    self.books_db_repository.update_book(
                         volume,
                         {  # Book ID will be checked in the repository
                             "file_path": file_path,

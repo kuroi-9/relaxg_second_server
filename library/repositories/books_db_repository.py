@@ -1,7 +1,7 @@
 from library.models import Book, BookSeries
 from typing import Dict, Any, List
 
-class BookDBRepository:
+class BooksDBRepository:
     def create_bookseries(self, data: Dict[str, Any]):
         '''
         Prototype: Creates a new bookseries record.

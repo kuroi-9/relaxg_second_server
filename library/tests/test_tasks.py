@@ -29,17 +29,17 @@ class TasksTestCase(unittest.TestCase):
             )
 
     # Mocked functions and methods, reversed in the test prototype
-    @patch('library.tasks.localFileRepository')
-    @patch('library.tasks.bookDBRepository')
+    @patch('library.tasks.localFilesRepository')
+    @patch('library.tasks.BooksDBRepository')
     @patch('library.tasks.singleScannedVolumeService')
     @patch('library.tasks.process_single_scanned_bookseries_task') # Mock the celery task call
-    def test_initiate_library_scan_task_with_default_path(self, mock_process_task, mock_single_scanned_volume_service, mock_book_db_repository, mock_local_file_repository):
+    def test_initiate_library_scan_task_with_default_path(self, mock_process_task, mock_single_scanned_volume_service, mock_books_db_repository, mock_local_files_repository):
         """
         Test initiate_library_scan_task when scan_books_directory_path is None,
         using the default BOOKS_DIR from settings.
         """
         # Setup mocks
-        mock_local_file_repository.list_available_bookseries.return_value = [
+        mock_local_files_repository.list_available_bookseries.return_value = [
             '/mock/books/dir/series1',
             '/mock/books/dir/series2'
         ]
@@ -48,7 +48,7 @@ class TasksTestCase(unittest.TestCase):
         result = initiate_library_scan_task(None, 1)
 
         # Assertions
-        mock_local_file_repository.list_available_bookseries.assert_called_once_with(
+        mock_local_files_repository.list_available_bookseries.assert_called_once_with(
             settings.BOOKS_DIR, [".cbz"]
         )
         # Verify that process_single_scanned_bookseries_task was called for each series
@@ -57,35 +57,35 @@ class TasksTestCase(unittest.TestCase):
         self.assertEqual(mock_process_task.call_count, 2)
         self.assertTrue(result)
 
-    @patch('library.tasks.localFileRepository')
-    @patch('library.tasks.bookDBRepository')
+    @patch('library.tasks.localFilesRepository')
+    @patch('library.tasks.BooksDBRepository')
     @patch('library.tasks.singleScannedVolumeService')
     @patch('library.tasks.process_single_scanned_bookseries_task')
-    def test_initiate_library_scan_task_with_specific_path(self, mock_process_task, mock_single_scanned_volume_service, mock_book_db_repository, mock_local_file_repository):
+    def test_initiate_library_scan_task_with_specific_path(self, mock_process_task, mock_single_scanned_volume_service, mock_books_db_repository, mock_local_files_repository):
         """
         Test initiate_library_scan_task with a specific scan_books_directory_path.
         """
-        mock_local_file_repository.list_available_bookseries.return_value = [
+        mock_local_files_repository.list_available_bookseries.return_value = [
             '/custom/path/seriesA'
         ]
         custom_path = '/custom/path'
 
         result = initiate_library_scan_task(custom_path, 2)
 
-        mock_local_file_repository.list_available_bookseries.assert_called_once_with(
+        mock_local_files_repository.list_available_bookseries.assert_called_once_with(
             custom_path, [".cbz"]
         )
         mock_process_task.assert_called_once_with('/custom/path/seriesA', 2)
         self.assertTrue(result)
 
-    @patch('library.tasks.localFileRepository')
-    @patch('library.tasks.bookDBRepository')
+    @patch('library.tasks.localFilesRepository')
+    @patch('library.tasks.BooksDBRepository')
     @patch('library.tasks.singleScannedVolumeService')
-    def test_process_single_scanned_bookseries_task_success(self, mock_single_scanned_volume_service, mock_book_db_repository, mock_local_file_repository):
+    def test_process_single_scanned_bookseries_task_success(self, mock_single_scanned_volume_service, mock_books_db_repository, mock_local_files_repository):
         """
         Test process_single_scanned_bookseries_task when volume processing is successful.
         """
-        mock_local_file_repository.list_available_volumes.return_value = [
+        mock_local_files_repository.list_available_volumes.return_value = [
             'volume1.cbz',
             'volume2.cbz'
         ]
@@ -96,7 +96,7 @@ class TasksTestCase(unittest.TestCase):
 
         process_single_scanned_bookseries_task(parent_dir, user_id)
 
-        mock_local_file_repository.list_available_volumes.assert_called_once_with(
+        mock_local_files_repository.list_available_volumes.assert_called_once_with(
             parent_dir, [".cbz"]
         )
         # Verify process_single_scanned_volume was called for each volume
@@ -108,14 +108,14 @@ class TasksTestCase(unittest.TestCase):
         )
         self.assertEqual(mock_single_scanned_volume_service.process_single_scanned_volume.call_count, 2)
 
-    @patch('library.tasks.localFileRepository')
-    @patch('library.tasks.bookDBRepository')
+    @patch('library.tasks.localFilesRepository')
+    @patch('library.tasks.BooksDBRepository')
     @patch('library.tasks.singleScannedVolumeService')
-    def test_process_single_scanned_bookseries_task_failure(self, mock_single_scanned_volume_service, mock_book_db_repository, mock_local_file_repository):
+    def test_process_single_scanned_bookseries_task_failure(self, mock_single_scanned_volume_service, mock_books_db_repository, mock_local_files_repository):
         """
         Test process_single_scanned_bookseries_task when some volume processing fails.
         """
-        mock_local_file_repository.list_available_volumes.return_value = [
+        mock_local_files_repository.list_available_volumes.return_value = [
             'volume1.cbz',
             'volume2.cbz'
         ]
@@ -129,21 +129,21 @@ class TasksTestCase(unittest.TestCase):
         with patch('library.tasks.logger') as mock_logger:
             process_single_scanned_bookseries_task(parent_dir, user_id)
 
-            mock_local_file_repository.list_available_volumes.assert_called_once_with(
+            mock_local_files_repository.list_available_volumes.assert_called_once_with(
                 parent_dir, [".cbz"]
             )
             self.assertEqual(mock_single_scanned_volume_service.process_single_scanned_volume.call_count, 2)
             mock_logger.error.assert_called_once_with("Failed to scan volume 'volume2.cbz' of '/mock/books/dir/series2'.")
 
-    @patch('library.tasks.localFileRepository')
-    @patch('library.tasks.bookDBRepository')
+    @patch('library.tasks.localFilesRepository')
+    @patch('library.tasks.BooksDBRepository')
     @patch('library.tasks.singleScannedVolumeService')
     @patch('library.tasks.process_single_scanned_bookseries_task')
-    def test_initiate_library_scan_task_with_error_in_processing_series(self, mock_process_task, mock_single_scanned_volume_service, mock_book_db_repository, mock_local_file_repository):
+    def test_initiate_library_scan_task_with_error_in_processing_series(self, mock_process_task, mock_single_scanned_volume_service, mock_books_db_repository, mock_local_files_repository):
         """
         Test initiate_library_scan_task when one of the series processing fails.
         """
-        mock_local_file_repository.list_available_bookseries.return_value = [
+        mock_local_files_repository.list_available_bookseries.return_value = [
             '/mock/books/dir/series1',
             '/mock/books/dir/series2'
         ]

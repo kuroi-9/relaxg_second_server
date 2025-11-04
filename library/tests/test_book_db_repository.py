@@ -1,10 +1,10 @@
 from django.test import TestCase
 from library.models import Book, BookSeries
-from library.repositories.book_db_repository import BookDBRepository
+from library.repositories.books_db_repository import BooksDBRepository
 
-class BookDBRepositoryTest(TestCase):
+class BooksDBRepositoryTest(TestCase):
     def setUp(self):
-        self.repository = BookDBRepository()
+        self.repository = BooksDBRepository()
         self.bookseries_data = {
             'title': 'Test Series',
             'directory_path': '/path/to/test/series',
