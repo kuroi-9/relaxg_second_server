@@ -39,5 +39,8 @@ urlpatterns = [
     path('api/get-csrf-token/', get_csrf_token, name='get_csrf_token'),
 
     # Library app views
-    path('api/library/', include('library.urls'))
+    path('api/library/', include('library.urls')),
+
+    # Jobs Manager app views
+    path('api/jobs/', include('jobs_manager.urls'))
 ]

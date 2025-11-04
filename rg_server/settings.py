@@ -40,6 +40,7 @@ ALLOWED_HOSTS = ["localhost", config("VPS_IP_ADRESS"), "0.0.0.0"]
 INSTALLED_APPS = [
     "channels",
     "library.apps.LibraryConfig",
+    "jobs_manager.apps.JobsManagerConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
