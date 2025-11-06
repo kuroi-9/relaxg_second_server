@@ -9,4 +9,10 @@ class JobSerializer(serializers.ModelSerializer):
 class JobsListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Job
-        fields = ['id', 'title', 'status', 'created_at']
+        fields = [
+            'id',
+            'title_name',
+            'created_at',
+            'completed_at',
+            'used_model_name'
+        ]

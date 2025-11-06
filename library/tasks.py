@@ -36,7 +36,7 @@ def initiate_library_scan_task(scan_books_directory_path: str | None, user_id: i
     #     scan_books_directory_path = books_default_directory
     #
     # WIP: Setting moved in .env
-    scan_books_directory_path = scan_books_directory_path if scan_books_directory_path is not None else settings.BOOKS_DIR
+    scan_books_directory_path = scan_books_directory_path if scan_books_directory_path is not None else "/books/"
 
     assert scan_books_directory_path is not None
     available_bookseries_paths = localFilesRepository.list_available_bookseries(
