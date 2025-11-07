@@ -1,11 +1,11 @@
 from django.test import TestCase
 from unittest.mock import patch
-from library.repositories.local_files_repository import localFilesRepository
+from library.repositories.local_files_repository import LocalFilesRepository
 
 class localFilesRepositoryTests(TestCase):
-    def setUp(self):
+    def setUp(self, local_files_repo=LocalFilesRepository):
         # Préparer une instance du repository pour chaque test
-        self.repository = localFilesRepository()
+        self.repository = local_files_repo()
 
     # =============================================================================
     # Tests for list_available_book_series() method

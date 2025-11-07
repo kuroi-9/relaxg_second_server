@@ -49,7 +49,7 @@ class TasksTestCase(unittest.TestCase):
 
         # Assertions
         mock_local_files_repository.list_available_bookseries.assert_called_once_with(
-            settings.BOOKS_DIR, [".cbz"]
+            '/books/', [".cbz"]
         )
         # Verify that process_single_scanned_bookseries_task was called for each series
         mock_process_task.assert_any_call('/mock/books/dir/series1', 1)

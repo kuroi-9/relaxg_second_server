@@ -27,6 +27,15 @@ services:
         environment:
             - PYTHONDONTWRITEBYTECODE=1
             - PYTHONUNBUFFERED=1
+            - NVIDIA_VISIBLE_DEVICES=all
+            - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+        deploy:
+             resources:
+                 reservations:
+                     devices:
+                         - driver: nvidia
+                           count: 1
+                           capabilities: [gpu]    
         command: python manage.py runserver 0.0.0.0:8000
         networks:
             - relaxg_second_server_default

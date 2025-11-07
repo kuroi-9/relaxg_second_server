@@ -1,8 +1,8 @@
 import os
 from typing import List
 
-class localFilesRepository:
-    '''localFilesRepository class provides methods to interact with local files.'''
+class LocalFilesRepository:
+    '''LocalFilesRepository class provides methods to interact with local files.'''
 
     def list_available_bookseries(self, books_directory_path: str, extensions: List[str]) -> List[str]:
         '''

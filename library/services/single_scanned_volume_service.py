@@ -1,10 +1,10 @@
-from library.repositories.local_files_repository import localFilesRepository
+from library.repositories.local_files_repository import LocalFilesRepository
 from library.repositories.books_db_repository import BooksDBRepository
 
 
 class SingleScannedVolumeService:
     def __init__(
-        self, local_files_repo=localFilesRepository, books_db_repo=BooksDBRepository
+        self, local_files_repo=LocalFilesRepository, books_db_repo=BooksDBRepository
     ):
         self.local_files_repository = local_files_repo()
         self.books_db_repository = books_db_repo()

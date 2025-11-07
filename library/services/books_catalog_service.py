@@ -1,7 +1,7 @@
 from typing import Dict, Any, List
 from library.models import Book, BookSeries
 from library.repositories.books_db_repository import BooksDBRepository
-from library.repositories.local_files_repository import localFilesRepository
+from library.repositories.local_files_repository import LocalFilesRepository
 # Import service from other application for communication
 #from upscale_processor_app.services.upscaling_orchestrator_service import UpscalingOrchestratorService
 from library.tasks import initiate_library_scan_task
@@ -13,7 +13,7 @@ class BooksCatalogService:
     It also integrates with other services for advanced operations like upscaling images.
     '''
 
-    def __init__(self, book_db_repo=BooksDBRepository, local_files_repo=localFilesRepository, upscale_service=None):
+    def __init__(self, book_db_repo=BooksDBRepository, local_files_repo=LocalFilesRepository, upscale_service=None):
         self.booksDBRepository = book_db_repo()
         self.localFilesRepository = local_files_repo()
 

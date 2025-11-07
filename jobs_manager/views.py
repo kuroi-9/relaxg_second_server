@@ -16,3 +16,11 @@ class JobsManagerJobs(APIView):
         jobs = jobsManagerService.get_jobs()
         serializer = JobsListSerializer(jobs, many=True)
         return Response(serializer.data)
+
+class JobsManagerJobsInference(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request: Request, *args, **kwargs) -> Response:
+        jobsManagerService = JobsManagerService()
+        jobsManagerService.test_inference(request.data)
+        return Response(status=201)
