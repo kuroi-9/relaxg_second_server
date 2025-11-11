@@ -16,13 +16,13 @@ class JobsManagerService:
     def get_job(self, job_id: int) -> Job:
         return self.jobsDBRepository.get_job(job_id)
 
-    def create_job(self, job_data: Dict, upscale_params: Dict[str, Any], user: Any) -> Job:
+    def create_job(self, job_data: Dict, upscale_params: Dict[str, Any] | None, user: Any) -> Job:
         return self.jobsDBRepository.create_job(job_data)
 
-    def test_inference(self, job_data: Dict) -> Job:
+    def test_inference(self, job_data: Dict) -> None:
         return run_inference_task()
 
-    def process_controller(self, job_data: Dict) -> Job:
+    def process_controller(self, job_data: Dict) -> None:
         jobs_volumes_path = job_data['title_path']
 
         if not os.path.exists(jobs_volumes_path):
@@ -30,5 +30,7 @@ class JobsManagerService:
 
         # scanning available volumes of the title
         jobs_volumes = self.localFilesRepository.scan(jobs_volumes_path)
-
         print(jobs_volumes)
+        for job_volume in jobs_volumes:
+            self.localFilesRepository.extraction(job_data['title_name'], job_volume)
+            break
