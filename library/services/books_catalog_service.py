@@ -67,7 +67,7 @@ class BooksCatalogService:
         return initiate_library_scan_task(scan_directory_path, user_id)
 
 
-    def request_title_upscale(self, title_id: int, upscale_params: Dict[str, Any], user: Any) -> None:
+    def request_title_upscale(self, title_id: int, upscale_params: Dict[str, Any] | None, user: Any) -> None:
         '''
         Prototype: Create an upscale job for a title.
         Pre-conditions:

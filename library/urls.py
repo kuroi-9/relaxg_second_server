@@ -8,5 +8,5 @@ urlpatterns = [
     path("titles/books/<str:title_name>", views.LibraryTitlesBooksAPIView.as_view(), name="dashboard-titles-books"),
     path("refresh/", views.LibraryRefreshAPIView.as_view(), name="index"),
     path("user/preferences/", views.UserLibraryPreferencesAPIView.as_view(), name="user-detail"),
-    path("process/", views.TitleUpscaleRequestAPIView.as_view(), name="title-upscale-request-api-view"),
+    path("process/<int:title_id>/", views.TitleUpscaleRequestAPIView.as_view(), name="title-upscale-request-api-view"),
 ]
