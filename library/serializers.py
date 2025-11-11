@@ -1,20 +1,20 @@
 from rest_framework import serializers
-from .models import Book, BookSeries
+from .models import Book, Title
 
-class BookSeriesListSerializer(serializers.ModelSerializer):
-    # Prototype: Serializer for displaying a list of bookseries.
+class TitlesListSerializer(serializers.ModelSerializer):
+    # Prototype: Serializer for displaying a list of titles.
     # Pre-conditions: Instance(s) of Book.
-    # Post-conditions: Dictionary(s) containing relevant fields for bookseries display.
+    # Post-conditions: Dictionary(s) containing relevant fields for title display.
     class Meta:
-        model = BookSeries
-        fields = ['id', 'title', 'description', 'cover_image']
+        model = Title
+        fields = ['id', 'name', 'description', 'cover_image']
 
-class BookSeriesDetailSerializer(serializers.ModelSerializer):
-    # Prototype: Serializer for displaying full details of a bookseries.
-    # Pre-conditions: Instance of BookSeries.
-    # Post-conditions: Dictionary containing all details of the bookseries.
+class TitleDetailSerializer(serializers.ModelSerializer):
+    # Prototype: Serializer for displaying full details of a title.
+    # Pre-conditions: Instance of Title.
+    # Post-conditions: Dictionary containing all details of the title.
     class Meta:
-        model = BookSeries
+        model = Title
         fields = '__all__'
 
 class BookListSerializer(serializers.ModelSerializer):
@@ -23,7 +23,7 @@ class BookListSerializer(serializers.ModelSerializer):
     # Post-conditions: Dictionary(s) containing relevant fields for list display.
     class Meta:
         model = Book
-        fields = ['id', 'title', 'author', 'isbn', 'status']
+        fields = ['id', 'name', 'author', 'isbn', 'status']
 
 class BookDetailSerializer(serializers.ModelSerializer):
     # Prototype: Serializer for displaying full details of a book.

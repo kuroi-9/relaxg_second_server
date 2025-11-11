@@ -8,12 +8,21 @@ class Job(models.Model):
         ('completed', 'Completed'),
         ('failed', 'Failed')
     ]
+    STEPS = [
+        ('scanning', 'Scanning'),
+        ('extraction', 'Extraction'),
+        ('resizing', 'Resizing'),
+        ('enhancement', 'Enhancement'),
+        ('finalization', 'Finalization')
+    ]
 
     id = models.AutoField(primary_key=True)
     title_name = models.CharField(max_length=255)
     title_path = models.CharField(max_length=255)
-    description = models.TextField()
+    description = models.TextField(null=True, blank=True)
+    images_number = models.IntegerField(default=0)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    step = models.CharField(max_length=20, choices=STEPS, default='extraction')
     created_at = models.DateTimeField(auto_now_add=True)
     completed_at = models.DateTimeField(null=True, blank=True)
     # model = models.ForeignKey('Model', on_delete=models.CASCADE)

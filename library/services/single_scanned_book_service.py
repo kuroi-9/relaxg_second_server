@@ -2,62 +2,62 @@ from library.repositories.local_files_repository import LocalFilesRepository
 from library.repositories.books_db_repository import BooksDBRepository
 
 
-class SingleScannedVolumeService:
+class SingleScannedBookService:
     def __init__(
         self, local_files_repo=LocalFilesRepository, books_db_repo=BooksDBRepository
     ):
         self.local_files_repository = local_files_repo()
         self.books_db_repository = books_db_repo()
 
-    def process_single_scanned_volume(
-        self, file_path: str, user_id: int, parent_bookseries_directory: str
+    def process_single_scanned_book(
+        self, file_path: str, user_id: int, parent_title_directory: str
     ) -> bool:
-        """Process a scanned volume.
+        """Process a scanned book.
 
         Args:
-            file_path (str): The file path of the scanned volume.
+            file_path (str): The file path of the scanned book.
             user_id (int): The ID of the user who initiated the scan.
-            parent_bookseries_directory (str): The directory path of the parent book series.
+            parent_title_directory (str): The directory path of the parent title.
 
         Returns:
-            bool: True if the volume was scanned successfully, False otherwise.
+            bool: True if the book was scanned successfully, False otherwise.
         """
 
-        bookSeries = self.books_db_repository.get_bookseries_by_filepath(
-            parent_bookseries_directory
+        title = self.books_db_repository.get_title_by_filepath(
+            parent_title_directory
         )
-        if bookSeries is None:
+        if title is None:
             try:
-                self.books_db_repository.create_bookseries(
+                self.books_db_repository.create_title(
                     {
-                        "directory_path": parent_bookseries_directory,
-                        "title": parent_bookseries_directory.split("/")[-2],
-                        "cover_image": "/covers/" + parent_bookseries_directory.split("/")[-2].replace(" ", "_") + "_cover.jpg"
+                        "directory_path": parent_title_directory,
+                        "name": parent_title_directory.split("/")[-2],
+                        "cover_image": "/covers/" + parent_title_directory.split("/")[-2].replace(" ", "_") + "_cover.jpg"
                     }
                 )
             except Exception as e:
                 raise Exception(
-                    f"Failed to create bookseries {parent_bookseries_directory}: {e}"
+                    f"Failed to create title {parent_title_directory}: {e}"
                 )
 
 
-        bookSeries = self.books_db_repository.get_bookseries_by_filepath(
-            parent_bookseries_directory
+        title = self.books_db_repository.get_title_by_filepath(
+            parent_title_directory
         )
-        if bookSeries is None:
+        if title is None:
             raise Exception(
-                f"Failed to find bookseries {parent_bookseries_directory}"
+                f"Failed to find title {parent_title_directory}"
             )
         else:
             # Checking if the book exists
-            volume = self.books_db_repository.get_volume_by_file_path(file_path)
+            volume = self.books_db_repository.get_book_by_file_path(file_path)
             if volume is None:
                 try:
                     self.books_db_repository.create_book(
                         {
                             "file_path": file_path,
-                            "series": bookSeries,
-                            "title": file_path.split("/")[-1].rsplit(".", 1)[0],
+                            "name": file_path.split("/")[-1].rsplit(".", 1)[0],
+                            "title": title,
                             "status": "none"
                         }
                     )
@@ -70,7 +70,7 @@ class SingleScannedVolumeService:
                         volume,
                         {  # Book ID will be checked in the repository
                             "file_path": file_path,
-                            "series": bookSeries,
+                            "title": title,
                         },
                     )
                 except Exception as e:

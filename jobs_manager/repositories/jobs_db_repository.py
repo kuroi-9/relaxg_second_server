@@ -1,5 +1,6 @@
 from jobs_manager.models import Job
 from typing import List
+from django.core.exceptions import ObjectDoesNotExist
 
 class JobsDBRepository:
     def create_job(self, data: dict) -> Job:
@@ -9,12 +10,12 @@ class JobsDBRepository:
 
     def get_job(self, job_id: int) -> Job:
         try:
-            return Job.objects.get(id=job_id)
-        except Job.DoesNotExist:
-            raise Job.DoesNotExist(f"Job with id {job_id} does not exist")
+            return Job._default_manager.get(id=job_id)
+        except ObjectDoesNotExist:
+            raise ObjectDoesNotExist(f"Job with id {job_id} does not exist")
 
     def get_jobs(self) -> List[Job]:
-        return Job.objects.all()
+        return Job._default_manager.all()
 
     def update_job(self, job: Job) -> Job:
         job.save()
@@ -22,7 +23,7 @@ class JobsDBRepository:
 
     def delete_job(self, job_id: int) -> None:
         try:
-            job = Job.objects.get(id=job_id)
+            job = Job._default_manager.get(id=job_id)
             job.delete()
-        except Job.DoesNotExist:
-            raise Job.DoesNotExist(f"Job with id {job_id} does not exist")
+        except ObjectDoesNotExist:
+            raise ObjectDoesNotExist(f"Job with id {job_id} does not exist")

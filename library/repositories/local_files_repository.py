@@ -4,41 +4,41 @@ from typing import List
 class LocalFilesRepository:
     '''LocalFilesRepository class provides methods to interact with local files.'''
 
-    def list_available_bookseries(self, books_directory_path: str, extensions: List[str]) -> List[str]:
+    def list_available_titles(self, titles_directory_path: str, extensions: List[str]) -> List[str]:
         '''
-        Prototype: Lists book series paths with certain extensions in a given directory (recursive).
-        Pre-conditions: 'book_directory_path' is a valid path, 'extensions' is a list of formats (e.g., ['.cbz']).
+        Prototype: Lists titles paths with certain extensions in a given directory (recursive).
+        Pre-conditions: 'titles_directory_path' is a valid path, 'extensions' is a list of formats (e.g., ['.cbz']).
         Post-conditions: Returns a list of absolute file paths. Raises FileNotFoundError if the directory doesn't exist
         '''
 
-        available_book_series = set()
+        available_titles = set()
         try:
-            for dir in os.listdir(books_directory_path):
+            for dir in os.listdir(titles_directory_path):
                 # Walking in the book directory to scan volumes and their extension
-                for root, dirs, files in os.walk(os.path.join(books_directory_path, dir)):
+                for root, dirs, files in os.walk(os.path.join(titles_directory_path, dir)):
                     for file in files:
                         if file.endswith(tuple(extensions)):
                             split_path = os.path.split(root)
                             if split_path[1] != "out" and split_path[1] != "masked":
-                                available_book_series.add(os.path.join(root) + "/")
+                                available_titles.add(os.path.join(root) + "/")
         except FileNotFoundError:
-            raise FileNotFoundError(f"The directory '{books_directory_path}' does not exist.")
-        return list(available_book_series)
+            raise FileNotFoundError(f"The directory '{titles_directory_path}' does not exist.")
+        return list(available_titles)
 
-    def list_available_volumes(self, parent_series_directory_path: str, extensions: List[str]) -> List[str]:
-        '''Lists all available volumes in a given directory.'''
+    def list_available_books(self, parent_title_directory_path: str, extensions: List[str]) -> List[str]:
+        '''Lists all available books in a given directory.'''
 
-        available_volumes = []
+        available_books = []
         try:
-            for root, dirs, files in os.walk(parent_series_directory_path):
+            for root, dirs, files in os.walk(parent_title_directory_path):
                 for file in files:
                     if file.endswith(tuple(extensions)):
                         split_path = os.path.split(root)
                         if split_path[1] != "out" and split_path[1] != "masked":
-                            available_volumes.append(os.path.join(root, file))
+                            available_books.append(os.path.join(root, file))
         except FileNotFoundError:
-            raise FileNotFoundError(f"The directory '{parent_series_directory_path}' does not exist.")
-        return available_volumes
+            raise FileNotFoundError(f"The directory '{parent_title_directory_path}' does not exist.")
+        return available_books
 
 
     def file_exists(self, file_path: str) -> bool:

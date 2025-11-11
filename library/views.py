@@ -9,59 +9,59 @@ from library.services.user_profile_service import UserProfileService
 import json
 
 
-class LibraryDashboardBookSeriesAPIView(APIView):
+class LibraryDashboardTitlesAPIView(APIView):
     """
-    Prototype: Handles the initial display of the dashboard/book list.
+    Prototype: Handles the initial display of the dashboard/titles list.
     Pre-conditions: GET request. User is authenticated. Optional query parameters for sorting/searching.
     Post-conditions: Returns an HTTP Response (200 OK) with the serialized list of books.
-    **Relations:** Calls `BooksCatalogService.get_dashboard_books()`.
+    **Relations:** Calls `BooksCatalogService.get_dashboard_titles()`.
     """
 
     permission_classes = [IsAuthenticated]
 
     def get(self, request: Request, *args, **kwargs) -> JsonResponse:
         booksCatalogService = BooksCatalogService()
-        books = booksCatalogService.get_dashboard_books(None, {}, {}) #TODO: Implement pagination and filtering
+        titles = booksCatalogService.get_dashboard_titles(None, {}, {}) #TODO: Implement pagination and filtering
         try:
-            response = JsonResponse({'bookseries': list(books)})
+            response = JsonResponse({'titles': list(titles)})
         except Exception as e:
             response = JsonResponse({'An error occurred': str(e)}, status=500)
         return response
 
-class LibraryDashboardBookSeriesCoversAPIView(APIView):
+class LibraryDashboardTitlesCoversAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request: Request, *args, **kwargs) -> JsonResponse:
+    def get(self, request: Request, *args, **kwargs) -> FileResponse | JsonResponse:
         import os
         from django.conf import settings
 
         cover_path = request.GET.get('cover_path', None)
         if not cover_path:
-            return JsonResponse({'error': 'Missing required parameter: bookname'}, status=400)
+            return JsonResponse({'error': 'Missing required parameter: cover_path'}, status=400)
 
         try:
             if os.path.isfile(cover_path):
                 response = FileResponse(open(cover_path, 'rb'), content_type='image/jpeg')
             else:
-                response = JsonResponse({'error': f'Cover not found for book: {book_name}'}, status=404)
+                response = JsonResponse({'error': f'Cover not found: {cover_path}'}, status=404)
         except Exception as e:
             response = JsonResponse({'An error occurred': str(e)}, status=500)
         return response
 
-class LibraryBookseriesBooksAPIView(APIView):
+class LibraryTitlesBooksAPIView(APIView):
     """
-    Prototype: Retrieves a list of books belonging to a specific book series.
-    Pre-conditions: GET request with 'bookseries_title' (book series title) in the URL.
+    Prototype: Retrieves a list of books belonging to a specific title.
+    Pre-conditions: GET request with 'title_name' in the URL.
     Post-conditions: Returns HTTP Response (200 OK) with a list of books, or 404 Not Found.
-    **Relations:** Calls `BooksCatalogService.get_books_by_bookseries_title()`.
+    **Relations:** Calls `BooksCatalogService.get_books_by_title_name()`.
     """
 
     permission_classes = [IsAuthenticated]
-    def get(self, request: Request, bookseries_title: str, *args, **kwargs) -> Response:
+    def get(self, request: Request, title_name: str, *args, **kwargs) -> Response | JsonResponse:
         from library.serializers import BookListSerializer
 
         booksCatalogService = BooksCatalogService()
-        books = booksCatalogService.get_books_by_bookseries_title(bookseries_title)
+        books = booksCatalogService.get_books_by_title_name(title_name)
         serialized_books = BookListSerializer(books, many=True)
         try:
             serialized_books.data
@@ -101,7 +101,7 @@ class UserLibraryPreferencesAPIView(APIView):
     Prototype: Handles the request to display the preferences of a specific user regarding the library.
     Pre-conditions: GET request with 'pk' (user ID) in the URL.
     Post-conditions: Returns HTTP Response (200 OK) with user library preferences, or 404 Not Found.
-    **Relations:** Calls `BooksCatalogService.get_user_library_preferences()`.
+    **Relations:** Calls `BooksCatalogService.get_user_preferences()`.
     """
     permission_classes = [IsAuthenticated]
 
@@ -119,11 +119,15 @@ class UserLibraryPreferencesAPIView(APIView):
         isUpdated = user_preferences_service.update_user_preferences(request.user.id, user_preferences.get('preferences', {}))
         return JsonResponse({"is_updated": isUpdated})
 
-class BookUpscaleRequestAPIView:
+class TitleUpscaleRequestAPIView(APIView):
     # Prototype: Handles the request to launch an upscaling job for a given book.
     # Pre-conditions: POST request. Body contains 'book_id' and 'preset_name'. User is authenticated.
     # Post-conditions: Returns HTTP Response (202 Accepted) if job is initiated.
     #   400 Bad Request if invalid parameters or service business error. 404 Not Found if book not found.
     # **Relations:** Calls `BooksCatalogService.request_book_upscale()`.
+    permission_classes = [IsAuthenticated]
+
     def post(self, request: Request, *args, **kwargs) -> Response:
-        return Response({"message": "to implement"})
+        booksCatalogService = BooksCatalogService()
+        print(request.data)
+        booksCatalogService.request_title_upscale(request.data['title_id'], None, None)

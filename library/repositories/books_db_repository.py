@@ -1,17 +1,17 @@
-from library.models import Book, BookSeries
+from library.models import Book, Title
 from typing import Dict, Any, List
 
 class BooksDBRepository:
-    def create_bookseries(self, data: Dict[str, Any]):
+    def create_title(self, data: Dict[str, Any]):
         '''
-        Prototype: Creates a new bookseries record.
-        Pre-conditions: 'data' is a dictionary of bookseries attributes.
-        Post-conditions: Returns the newly created BookSeries instance.
+        Prototype: Creates a new title record.
+        Pre-conditions: 'data' is a dictionary of title attributes.
+        Post-conditions: Returns the newly created Title instance.
         '''
 
-        bookseries = BookSeries(**data)
-        bookseries.save()
-        return bookseries
+        title = Title(**data)
+        title.save()
+        return title
 
     def create_book(self, data: Dict[str, Any]) -> Book:
         '''
@@ -24,7 +24,6 @@ class BooksDBRepository:
         book.save()
         return book
 
-
     def update_book(self, book: Book, data: Dict[str, Any]) -> Book:
         '''
         Prototype: Updates an existing book.
@@ -33,27 +32,27 @@ class BooksDBRepository:
         '''
 
         book.file_path = data.get('file_path', book.file_path)
-        book.series = data.get('series', book.series)
+        book.title = data.get('title', book.title)
         book.save()
         return book
 
-    def get_bookseries_by_filepath(self, bookseries_filepath: str) -> BookSeries | None:
+    def get_title_by_filepath(self, title_filepath: str) -> Title | None:
         '''
-        Retrieves a book series by its file path in the database.
-        Pre-conditions: 'bookseries_filepath' is the complete file path.
-        Post-conditions: Returns the BookSeries instance or None if not found.
+        Retrieves a title by its file path in the database.
+        Pre-conditions: 'title_filepath' is the complete file path.
+        Post-conditions: Returns the Title instance or None if not found.
         '''
 
-        return BookSeries._default_manager.filter(directory_path=bookseries_filepath).first()
+        return Title._default_manager.filter(directory_path=title_filepath).first()
 
-    def get_bookseries_books(self, bookseries_title: str) -> List[Book]:
+    def get_title_books(self, title_name: str) -> List[Book]:
         '''
-        Retrieves all books associated with a book series from the database.
-        Pre-conditions: 'bookseries_title' is the title of the book series.
+        Retrieves all books associated with a title from the database.
+        Pre-conditions: 'title_name' is the title of the title.
         Post-conditions: Returns a list of Book instances.
         '''
 
-        return Book._default_manager.filter(series=bookseries_title).all().order_by('title')
+        return Book._default_manager.filter(title=title_name).all().order_by('title')
 
     def get_book_by_id(self, book_id: int) -> Book | None:
         '''
@@ -64,26 +63,26 @@ class BooksDBRepository:
 
         return Book._default_manager.filter(id=book_id).first()
 
-    def get_volume_by_file_path(self, file_path: str) -> Book | None:
+    def get_book_by_file_path(self, file_path: str) -> Book | None:
         '''
-        Retrieves a book volume by its file path from the database.
+        Retrieves a book by its file path from the database.
         Pre-conditions: 'file_path' is the complete file path.
         Post-conditions: Returns the Book instance or None if not found.
         '''
 
         return Book._default_manager.filter(file_path=file_path).first()
 
-    def get_bookseries_with_filters_and_order(self, filters: Dict[str, Any], order_by: str) -> List[BookSeries | None]:
+    def get_titles_with_filters_and_order(self, filters: Dict[str, Any], order_by: str) -> List[Title | None]:
         '''
-        Retrieves bookseries filtered and ordered from the database.
+        Retrieves titles filtered and ordered from the database.
         Pre-conditions: 'filters' is a dictionary of filter criteria, 'order_by' is a string for sorting.
-        Post-conditions: Returns a QuerySet of matching BookSeries objects, ready for pagination.
+        Post-conditions: Returns a QuerySet of matching Title objects, ready for pagination.
         '''
 
         try:
-            return list(BookSeries._default_manager.filter(**filters).order_by(order_by).values())
+            return list(Title._default_manager.filter(**filters).order_by(order_by).values())
         except Exception as e:
-            raise Exception(f"Error fetching bookseries: {e}")
+            raise Exception(f"Error fetching titles: {e}")
 
     def get_books_with_filters_and_order(self, filters: Dict[str, Any], order_by: str) -> List[Book | None]:
         '''
@@ -93,3 +92,12 @@ class BooksDBRepository:
         '''
 
         return Book._default_manager.filter(**filters).order_by(order_by).all()
+
+    def get_title_by_id(self, title_id: int) -> Title | None:
+        '''
+        Retrieves a title by its ID from the database.
+        Pre-conditions: 'title_id' is the ID of the title.
+        Post-conditions: Returns the Title instance or None if not found.
+        '''
+
+        return Title._default_manager.filter(id=title_id).first()
