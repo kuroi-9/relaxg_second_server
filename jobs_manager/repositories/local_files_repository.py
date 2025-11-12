@@ -26,7 +26,9 @@ class LocalFilesRepository:
     def extraction(self, title_dir: str, cbz_file: str):
         '''
         Prototype: Extracts the contents of a .cbz file located in the specified title directory.
-        Pre-conditions: 'title_dir' is the name of the title directory inside '/books/', 'cbz_file' is the name of the .cbz file.
+        Pre-conditions:
+        - 'title_dir' is the name of the title directory inside '/books/'
+        - 'cbz_file' is the name of the .cbz file.
         Post-conditions: Extracts the .cbz file into the title directory. Raises FileNotFoundError if the file or directory does not exist.
         '''
 

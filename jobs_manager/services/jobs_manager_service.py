@@ -20,9 +20,14 @@ class JobsManagerService:
         return self.jobsDBRepository.create_job(job_data)
 
     def test_inference(self, job_data: Dict) -> None:
+        '''Only for testing purposes'''
         return run_inference_task()
 
     def process_controller(self, job_data: Dict) -> None:
+        '''
+        Orchestrates the whole processing of a job.
+        '''
+
         jobs_volumes_path = job_data['title_path']
 
         if not os.path.exists(jobs_volumes_path):

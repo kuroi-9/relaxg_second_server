@@ -3,6 +3,7 @@ from typing import List
 from django.core.exceptions import ObjectDoesNotExist
 
 class JobsDBRepository:
+    '''Repository for managing jobs in the database.'''
     def create_job(self, data: dict) -> Job:
         job = Job(**data)
         job.save()

@@ -1,6 +1,4 @@
 from celery import shared_task
-from django.conf import settings
-
 from inference_implementation.inference import InferenceImplementation
 from jobs_manager.repositories.local_files_repository import LocalFilesRepository
 

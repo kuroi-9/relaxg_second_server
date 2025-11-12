@@ -25,5 +25,4 @@ class Job(models.Model):
     step = models.CharField(max_length=20, choices=STEPS, default='extraction')
     created_at = models.DateTimeField(auto_now_add=True)
     completed_at = models.DateTimeField(null=True, blank=True)
-    # model = models.ForeignKey('Model', on_delete=models.CASCADE)
     used_model_name = models.TextField()
