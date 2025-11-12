@@ -23,10 +23,10 @@ class BooksDBRepositoryTest(TestCase):
         Title._default_manager.all().delete()
 
     def test_create_title(self):
-        titles = self.repository.create_title(self.title_data)
-        self.assertIsInstance(titles, Title)
-        self.assertEqual(titles.name, 'Test Series')
-        self.assertEqual(titles.directory_path, '/path/to/test/series')
+        title = self.repository.create_title(self.title_data)
+        self.assertIsInstance(title, Title)
+        self.assertEqual(title.name, 'Test Series')
+        self.assertEqual(title.directory_path, '/path/to/test/series')
         self.assertEqual(Title._default_manager.count(), 1)
 
     def test_create_book(self):
@@ -55,7 +55,7 @@ class BooksDBRepositoryTest(TestCase):
         updated_book_with_series = self.repository.update_book(updated_book, update_data_with_series)
         self.assertEqual(updated_book_with_series.title, title)
 
-    def test_get_titles_by_filepath(self):
+    def test_get_title_by_filepath(self):
         self.repository.create_title(self.title_data)
         found_series = self.repository.get_title_by_filepath('/path/to/test/series')
         self.assertIsNotNone(found_series)
@@ -87,7 +87,7 @@ class BooksDBRepositoryTest(TestCase):
         not_found_book = self.repository.get_book_by_file_path('/path/to/non/existent/book.pdf')
         self.assertIsNone(not_found_book)
 
-    def test_get_titles_with_filters_and_order(self):
+    def test_get_title_with_filters_and_order(self):
         #TODO: Implement filters and order + pagination first
         pass
     def test_get_books_with_filters_and_order(self):

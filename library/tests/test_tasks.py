@@ -51,7 +51,7 @@ class TasksTestCase(unittest.TestCase):
         mock_local_files_repository.list_available_titles.assert_called_once_with(
             '/books/', [".cbz"]
         )
-        # Verify that process_single_scanned_titles_task was called for each series
+        # Verify that process_single_scanned_title_task was called for each series
         mock_process_task.assert_any_call('/mock/books/dir/series1', 1)
         mock_process_task.assert_any_call('/mock/books/dir/series2', 1)
         self.assertEqual(mock_process_task.call_count, 2)
@@ -81,9 +81,9 @@ class TasksTestCase(unittest.TestCase):
     @patch('library.tasks.localFilesRepository')
     @patch('library.tasks.BooksDBRepository')
     @patch('library.tasks.singleScannedBookService')
-    def test_process_single_scanned_titles_task_success(self, mock_single_scanned_book_service, mock_books_db_repository, mock_local_files_repository):
+    def test_process_single_scanned_title_task_success(self, mock_single_scanned_book_service, mock_books_db_repository, mock_local_files_repository):
         """
-        Test process_single_scanned_titles_task when volume processing is successful.
+        Test process_single_scanned_title_task when volume processing is successful.
         """
         mock_local_files_repository.list_available_books.return_value = [
             'volume1.cbz',
@@ -111,9 +111,9 @@ class TasksTestCase(unittest.TestCase):
     @patch('library.tasks.localFilesRepository')
     @patch('library.tasks.BooksDBRepository')
     @patch('library.tasks.singleScannedBookService')
-    def test_process_single_scanned_titles_task_failure(self, mock_single_scanned_book_service, mock_books_db_repository, mock_local_files_repository):
+    def test_process_single_scanned_title_task_failure(self, mock_single_scanned_book_service, mock_books_db_repository, mock_local_files_repository):
         """
-        Test process_single_scanned_titles_task when some volume processing fails.
+        Test process_single_scanned_title_task when some volume processing fails.
         """
         mock_local_files_repository.list_available_books.return_value = [
             'volume1.cbz',
@@ -147,7 +147,7 @@ class TasksTestCase(unittest.TestCase):
             '/mock/books/dir/series1',
             '/mock/books/dir/series2'
         ]
-        # Make the first call to process_single_scanned_titles_task succeed, the second fail
+        # Make the first call to process_single_scanned_title_task succeed, the second fail
         mock_process_task.side_effect = [None, Exception("Simulated processing error")]
 
         parent_dir = None
