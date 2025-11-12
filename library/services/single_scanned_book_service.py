@@ -12,15 +12,15 @@ class SingleScannedBookService:
     def process_single_scanned_book(
         self, file_path: str, user_id: int, parent_title_directory: str
     ) -> bool:
-        """Process a scanned book.
-
-        Args:
-            file_path (str): The file path of the scanned book.
-            user_id (int): The ID of the user who initiated the scan.
-            parent_title_directory (str): The directory path of the parent title.
-
-        Returns:
-            bool: True if the book was scanned successfully, False otherwise.
+        """
+        Prototype: Process a scanned book and add it to the database.
+        Pre-conditions:
+        - 'file_path' is the path to the scanned book file.
+        - 'user_id' is the ID of the user who initiated the scan.
+        - 'parent_title_directory' is the directory path of the parent title.
+        Post-conditions:
+        - Returns True if the book was processed successfully.
+        - Raises Exception if any error occurs during processing.
         """
 
         title = self.books_db_repository.get_title_by_filepath(
@@ -76,5 +76,5 @@ class SingleScannedBookService:
                 except Exception as e:
                     raise Exception(f"Failed to update book {file_path}: {e}")
 
-            # If no exception raised, return True
+        # If no exception raised, return True
         return True

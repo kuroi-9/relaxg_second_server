@@ -9,7 +9,7 @@ class UserProfileRepository:
     def get_profile_by_user(self, user_id) -> CommonUser | None:
         """
         Prototype: Retrieves the user profile by user object.
-        Pre-conditions: 'user' is an instance of the Django user.
+        Pre-conditions: 'user_id' is an instance of the Django user.
         Post-conditions: Returns the associated UserProfile instance or None if not found.
         """
 
@@ -18,7 +18,9 @@ class UserProfileRepository:
     def set_default_scan_directory(self, user_id, directory_path: Any) -> str:
         """
         Prototype: Creates or updates the default scan directory for a user.
-        Pre-conditions: 'user' is an instance of the Django user, 'directory_path' is the path to set.
+        Pre-conditions:
+        - 'user_id' is an instance of the Django user.
+        - 'directory_path' is the path to set.
         Post-conditions: Creates or updates the UserProfile and returns the set path.
         """
 
@@ -36,7 +38,9 @@ class UserProfileRepository:
     def update_user_profile(self, user_id: int, preferences: Dict[str, Any]) -> bool:
         """
         Prototype: Updates the user profile with the provided preferences.
-        Pre-conditions: 'user_id' is the ID of the user, 'preferences' is a dictionary containing the updated preferences.
+        Pre-conditions:
+        - 'user_id' is the ID of the user.
+        - 'preferences' is a dictionary containing the updated preferences.
         Post-conditions: Updates the UserProfile and returns True if successful.
         """
 
