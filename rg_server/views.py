@@ -1,6 +1,6 @@
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.views import TokenRefreshView
-from .serializers import CustomTokenRefreshSerializer
+from .serializers import CustomTokenRefreshSerializer, CommonUserSerializer
 from django.conf import settings
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
@@ -10,9 +10,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import RetrieveAPIView
 from django.http import JsonResponse
 from django.views.decorators.csrf import ensure_csrf_cookie
-
-# Custom serializer
-from .serializers import CommonUserSerializer
 
 @ensure_csrf_cookie
 def get_csrf_token(request):
@@ -149,7 +146,7 @@ class UserMeView(RetrieveAPIView):
     View to retrieve information about the currently authenticated user.
     Requires a valid Access Token.
     """
-    permission_classes = (IsAuthenticated,)  # Protected, requires a valid JWT
+    permission_classes = [IsAuthenticated]  # Protected, requires a valid JWT
     serializer_class = CommonUserSerializer
 
     def get_object(self):
@@ -160,7 +157,7 @@ class ProtectedDataView(APIView):
     """
     Example of a protected view that requires a valid JWT.
     """
-    permission_classes = (IsAuthenticated,)  # Protected, requires a valid JWT
+    permission_classes = [IsAuthenticated] # Protected, requires a valid JWT
 
     def get(self, request):
         # The user object is accessible via request.user

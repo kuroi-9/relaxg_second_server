@@ -8,7 +8,6 @@ from rest_framework.permissions import IsAuthenticated
 from library.services.books_catalog_service import BooksCatalogService  # Import inside the method
 from library.services.user_profile_service import UserProfileService
 
-
 class LibraryDashboardTitlesAPIView(APIView):
     """
     Prototype: Handles the initial display of the dashboard/titles list.

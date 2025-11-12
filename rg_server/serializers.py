@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 from rest_framework_simplejwt.exceptions import InvalidToken
-
 from rg_server.models import CommonUser
 
 class CommonUserSerializer(serializers.ModelSerializer):
