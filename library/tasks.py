@@ -1,10 +1,6 @@
 from celery import shared_task
 from django.conf import settings
-
-# Import du repository local_files_repository
 from library.repositories.local_files_repository import LocalFilesRepository
-
-# Import du repository user_profile_repository pour obtenir le répertoire par défaut
 # from library.repositories.user_profile_repository import UserProfileRepository
 from library.repositories.books_db_repository import BooksDBRepository
 from library.services.single_scanned_book_service import SingleScannedBookService
@@ -62,7 +58,7 @@ def process_single_scanned_title_task(
     - Updates book status based on processing success or failure. TODO: Find another way to handle errors
     - Logs results for each book.
     **Relations:** Called by `initiate_library_scan_task`.
-      Calls `BooksCatalogService.process_scanned_book()`.
+      Calls `BooksCatalogService.process_single_scanned_book()`.
     """
 
     volumes = localFilesRepository.list_available_books(

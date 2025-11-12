@@ -1,3 +1,4 @@
+import json
 from django.http.response import JsonResponse
 from django.http import FileResponse
 from rest_framework.request import Request
@@ -6,7 +7,6 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from library.services.books_catalog_service import BooksCatalogService  # Import inside the method
 from library.services.user_profile_service import UserProfileService
-import json
 
 
 class LibraryDashboardTitlesAPIView(APIView):
@@ -14,7 +14,6 @@ class LibraryDashboardTitlesAPIView(APIView):
     Prototype: Handles the initial display of the dashboard/titles list.
     Pre-conditions: GET request. User is authenticated. Optional query parameters for sorting/searching.
     Post-conditions: Returns an HTTP Response (200 OK) with the serialized list of books.
-    **Relations:** Calls `BooksCatalogService.get_dashboard_titles()`.
     """
 
     permission_classes = [IsAuthenticated]
@@ -33,7 +32,6 @@ class LibraryDashboardTitlesCoversAPIView(APIView):
 
     def get(self, request: Request, *args, **kwargs) -> FileResponse | JsonResponse:
         import os
-        from django.conf import settings
 
         cover_path = request.GET.get('cover_path', None)
         if not cover_path:
@@ -53,7 +51,6 @@ class LibraryTitlesBooksAPIView(APIView):
     Prototype: Retrieves a list of books belonging to a specific title.
     Pre-conditions: GET request with 'title_name' in the URL.
     Post-conditions: Returns HTTP Response (200 OK) with a list of books, or 404 Not Found.
-    **Relations:** Calls `BooksCatalogService.get_books_by_title_name()`.
     """
 
     permission_classes = [IsAuthenticated]
@@ -75,7 +72,6 @@ class LibraryRefreshAPIView(APIView):
     Prototype: Triggers the book catalog refresh process.
     Pre-conditions: POST request. User is authenticated. Optionally, 'scan_directory_path' in the body.
     Post-conditions: Returns HTTP Response (202 Accepted) if scan is launched. 400 Bad Request if validation fails.
-    **Relations:** Calls `BooksCatalogService.initiate_library_scan()`.
     """
 
     permission_classes = [IsAuthenticated]
@@ -89,10 +85,11 @@ class LibraryRefreshAPIView(APIView):
         return Response({"content_type": "application/json", "message": "Scan launched successfully"}, status=202)
 
 class BookDetailAPIView:
-    # Prototype: Handles the request to display the details of a specific book.
-    # Pre-conditions: GET request with 'pk' (book ID) in the URL.
-    # Post-conditions: Returns HTTP Response (200 OK) with book details, or 404 Not Found.
-    # **Relations:** Calls `BooksCatalogService.get_book_details()`.
+    '''
+    Prototype: Handles the request to display the details of a specific book.
+    Pre-conditions: GET request with 'pk' (book ID) in the URL.
+    Post-conditions: Returns HTTP Response (200 OK) with book details, or 404 Not Found.
+    '''
     def get(self, request: Request, pk: int, *args, **kwargs) -> Response:
         return Response({"message": "to implement"})
 
@@ -101,7 +98,6 @@ class UserLibraryPreferencesAPIView(APIView):
     Prototype: Handles the request to display the preferences of a specific user regarding the library.
     Pre-conditions: GET request with 'pk' (user ID) in the URL.
     Post-conditions: Returns HTTP Response (200 OK) with user library preferences, or 404 Not Found.
-    **Relations:** Calls `BooksCatalogService.get_user_preferences()`.
     """
     permission_classes = [IsAuthenticated]
 
@@ -120,11 +116,12 @@ class UserLibraryPreferencesAPIView(APIView):
         return JsonResponse({"is_updated": isUpdated})
 
 class TitleUpscaleRequestAPIView(APIView):
-    # Prototype: Handles the request to launch an upscaling job for a given book.
-    # Pre-conditions: POST request. Body contains 'book_id' and 'preset_name'. User is authenticated.
-    # Post-conditions: Returns HTTP Response (202 Accepted) if job is initiated.
-    #   400 Bad Request if invalid parameters or service business error. 404 Not Found if book not found.
-    # **Relations:** Calls `BooksCatalogService.request_book_upscale()`.
+    '''
+    Prototype: Handles the request to launch an upscaling job for a given book.
+    Pre-conditions: POST request. Body contains 'book_id' and 'preset_name'. User is authenticated.
+    Post-conditions: Returns HTTP Response (202 Accepted) if job is initiated.
+      400 Bad Request if invalid parameters or service business error. 404 Not Found if book not found.
+    '''
     permission_classes = [IsAuthenticated]
 
     def post(self, request: Request, title_id: int, *args, **kwargs) -> None:
