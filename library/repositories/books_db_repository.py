@@ -2,6 +2,8 @@ from library.models import Book, Title
 from typing import Dict, Any, List
 
 class BooksDBRepository:
+    '''BooksDBRepository class provides methods to interact with books and titles in the database.'''
+
     def create_title(self, data: Dict[str, Any]):
         '''
         Prototype: Creates a new title record.
@@ -76,7 +78,7 @@ class BooksDBRepository:
         '''
         Retrieves titles filtered and ordered from the database.
         Pre-conditions: 'filters' is a dictionary of filter criteria, 'order_by' is a string for sorting.
-        Post-conditions: Returns a QuerySet of matching Title objects, ready for pagination.
+        Post-conditions: Returns a List of matching Title objects.
         '''
 
         try:
@@ -88,7 +90,7 @@ class BooksDBRepository:
         '''
         Retrieves books filtered and ordered from the database.
         Pre-conditions: 'filters' is a dictionary of filter criteria, 'order_by' is a string for sorting.
-        Post-conditions: Returns a QuerySet of matching Book objects, ready for pagination.
+        Post-conditions: Returns a List of matching Book objects.
         '''
 
         return Book._default_manager.filter(**filters).order_by(order_by).all()

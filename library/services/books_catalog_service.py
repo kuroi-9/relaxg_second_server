@@ -2,8 +2,6 @@ from typing import Dict, Any, List
 from library.models import Book, Title
 from library.repositories.books_db_repository import BooksDBRepository
 from library.repositories.local_files_repository import LocalFilesRepository
-# Import service from other application for communication
-#from upscale_processor_app.services.upscaling_orchestrator_service import UpscalingOrchestratorService
 from library.tasks import initiate_library_scan_task
 from jobs_manager.services.jobs_manager_service import JobsManagerService
 
@@ -43,8 +41,6 @@ class BooksCatalogService:
         Retrieves all books associated with a title from the database.
         Pre-conditions: 'title_name' is the title of the book.
         Post-conditions: Returns a list of Book instances.
-        **Relations:** Calls `get_title_books()`.
-
         '''
 
         try:
@@ -61,7 +57,6 @@ class BooksCatalogService:
         Post-conditions:
         - Returns True if the scan process is launched successfully (delegation to a Celery task).
         - Raises an Exception (e.g., PermissionError) if the directory is not accessible.
-        **Relations:** Calls `initiate_library_scan_task.delay()`.
         '''
 
         return initiate_library_scan_task(scan_directory_path, user_id)
@@ -76,7 +71,6 @@ class BooksCatalogService:
         - 'user' is the user initiating the upscale request.
         Post-conditions:
         - Raises ValueError if the title is not found.
-        **Relations:** Calls `booksDBRepository.get_title_by_id()` and `jobsManagerService.create_job()`.
         '''
 
         title = self.booksDBRepository.get_title_by_id(title_id)
@@ -91,7 +85,7 @@ class BooksCatalogService:
             'status': 'original', # Initial status for a new upscale job
             'step': 'scanning', # Starting with scanning to identify images
             'used_model_name': '4x-eula-digimanga-bw-v2-nc1',
-            # 'created_at' and 'completed_at' are handled by the Job model's defaults and auto_now_add
+            # 'created_at' is handled by the Job model's defaults
         }
 
         # The create_job method in JobManagerService is expected to accept a dictionary
@@ -103,7 +97,6 @@ class BooksCatalogService:
         Prototype: Retrieve the details of a specific book.
         Pre-conditions: 'book_id' is the ID of the book.
         Post-conditions: Returns the Book object or None.
-        **Relations:** Interacts with `BooksDBRepository.get_book_by_id()`.
         '''
 
         book = self.booksDBRepository.get_book_by_id(book_id)
