@@ -124,7 +124,6 @@ class TitleUpscaleRequestAPIView(APIView):
     '''
     permission_classes = [IsAuthenticated]
 
-    def post(self, request: Request, title_id: int, *args, **kwargs) -> None:
+    def post(self, request: Request, *args, **kwargs) -> None:
         booksCatalogService = BooksCatalogService()
-        print(request.data)
-        booksCatalogService.request_title_upscale(title_id, None, None)
+        booksCatalogService.request_title_upscale(request.data['title_id'], None, None)
