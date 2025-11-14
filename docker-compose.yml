@@ -37,7 +37,8 @@ services:
                         - driver: nvidia
                           count: 1
                           capabilities: [gpu]
-        command: python manage.py runserver 0.0.0.0:8000
+        # command: python manage.py runserver 0.0.0.0:8000
+        command: daphne -b 0.0.0.0 -p 8000 rg_server.asgi:application
         networks:
             - relaxg_second_server_default
 

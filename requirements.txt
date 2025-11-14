@@ -1,3 +1,4 @@
+daphne
 python-decouple
 django
 channels

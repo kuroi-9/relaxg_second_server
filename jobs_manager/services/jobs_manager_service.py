@@ -1,9 +1,11 @@
+import os
 from typing import Dict, List, Any
 from jobs_manager.models import Job
 from jobs_manager.repositories.jobs_db_repository import JobsDBRepository
 from jobs_manager.repositories.local_files_repository import LocalFilesRepository
 from jobs_manager.tasks import run_inference_task
-import os
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 class JobsManagerService:
     def __init__(self, jobs_db_repo=JobsDBRepository, local_files_repo=LocalFilesRepository):
@@ -29,13 +31,35 @@ class JobsManagerService:
         '''
 
         jobs_volumes_path = job_data['title_path']
+        channel_layer = get_channel_layer()
 
         if not os.path.exists(jobs_volumes_path):
             raise FileNotFoundError(f"Directory {jobs_volumes_path} does not exist")
 
         # scanning available volumes of the title
+        if channel_layer:
+            async_to_sync(channel_layer.group_send)(
+                'process_group',
+                {
+                    'type': 'process.message',
+                    'message': 'Scanning books'
+                }
+            )
         jobs_volumes = self.localFilesRepository.scan(jobs_volumes_path)
         print(jobs_volumes)
+
+        # extracting books
+        if channel_layer:
+            async_to_sync(channel_layer.group_send)(
+                'process_group',
+                {
+                    'type': 'process.message',
+                    'message': 'Extracting books'
+                }
+            )
+        else:
+            raise NotImplementedError("Channel layer is not available")
+
         for job_volume in jobs_volumes:
             self.localFilesRepository.extraction(job_data['title_name'], job_volume)
             break

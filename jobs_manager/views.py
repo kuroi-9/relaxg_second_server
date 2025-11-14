@@ -4,6 +4,9 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from jobs_manager.services.jobs_manager_service import JobsManagerService
 from jobs_manager.serializers import JobsListSerializer, JobSerializer
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+
 
 class JobsManagerJobs(APIView):
     permission_classes = [IsAuthenticated]
@@ -37,5 +40,16 @@ class JobsManagerInference(APIView):
         jobsManagerService = JobsManagerService()
         job = jobsManagerService.get_job(request.data['id'])
         job_serialized = JobSerializer(job)
+
+        channel_layer = get_channel_layer()
+        if channel_layer:
+            async_to_sync(channel_layer.group_send)(
+                'process_group',
+                {
+                    'type': 'process.message',
+                    'message': 'Start processing'
+                }
+            )
+
         jobsManagerService.process_controller(job_serialized.data)
         return Response(status=201)
