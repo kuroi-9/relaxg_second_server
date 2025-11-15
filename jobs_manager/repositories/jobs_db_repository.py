@@ -22,9 +22,10 @@ class JobsDBRepository:
         job.save()
         return job
 
-    def delete_job(self, job_id: int) -> None:
+    def delete_job(self, job_id: int) -> bool:
         try:
             job = Job._default_manager.get(id=job_id)
             job.delete()
+            return True
         except ObjectDoesNotExist:
             raise ObjectDoesNotExist(f"Job with id {job_id} does not exist")

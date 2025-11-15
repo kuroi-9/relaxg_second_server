@@ -15,6 +15,22 @@ class BooksDBRepository:
         title.save()
         return title
 
+    def delete_title(self, title_id: int) -> bool:
+        '''
+        Prototype: Deletes a title from the database.
+        Pre-conditions: 'title_id' is the ID of the title to delete.
+        Post-conditions: Returns True if the title was deleted, False otherwise.
+        '''
+        try:
+            title = Title._default_manager.filter(id=title_id).first()
+            if title:
+                title.delete()
+                return True
+            return False
+        except Exception as e:
+            raise Exception(f"Error deleting title: {e}")
+
+
     def create_book(self, data: Dict[str, Any]) -> Book:
         '''
         Prototype: Creates a new book record.
