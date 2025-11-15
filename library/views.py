@@ -49,7 +49,7 @@ class LibraryTitlesBooksAPIView(APIView):
     """
     Prototype: Retrieves a list of books belonging to a specific title.
     Pre-conditions: GET request with 'title_name' in the URL.
-    Post-conditions: Returns HTTP Response (200 OK) with a list of books, or 404 Not Found.
+    Post-conditions: Returns HTTP Response (200 OK) with a list of books, or 500 Internal Server Error.
     """
 
     permission_classes = [IsAuthenticated]
@@ -81,7 +81,7 @@ class LibraryRefreshAPIView(APIView):
         return Response({"content_type": "application/json", "message": "Scan launched successfully, please wait for the scan to complete."}, status=202)
 
     def get(self, request: Request, *args, **kwargs) -> Response:
-        return Response({"content_type": "application/json", "message": "Scan launched successfully"}, status=202)
+        return Response({"content_type": "application/json", "message": "Send a POST request to initiate the scan."}, status=200)
 
 class BookDetailAPIView:
     '''
@@ -118,11 +118,12 @@ class TitleUpscaleRequestAPIView(APIView):
     '''
     Prototype: Handles the request to launch an upscaling job for a given book.
     Pre-conditions: POST request. Body contains 'book_id' and 'preset_name'. User is authenticated.
-    Post-conditions: Returns HTTP Response (202 Accepted) if job is initiated.
+    Post-conditions: Returns HTTP Response (200 OK) if job is created.
       400 Bad Request if invalid parameters or service business error. 404 Not Found if book not found.
     '''
     permission_classes = [IsAuthenticated]
 
-    def post(self, request: Request, *args, **kwargs) -> None:
+    def post(self, request: Request, *args, **kwargs) -> Response:
         booksCatalogService = BooksCatalogService()
         booksCatalogService.request_title_upscale(request.data['title_id'], None, None)
+        return Response(status=200)

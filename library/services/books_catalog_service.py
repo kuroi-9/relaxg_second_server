@@ -4,6 +4,7 @@ from library.repositories.books_db_repository import BooksDBRepository
 from library.repositories.local_files_repository import LocalFilesRepository
 from library.tasks import initiate_library_scan_task
 from jobs_manager.services.jobs_manager_service import JobsManagerService
+from jobs_manager.models import Job
 
 class BooksCatalogService:
     '''
@@ -62,7 +63,7 @@ class BooksCatalogService:
         return initiate_library_scan_task(scan_directory_path, user_id)
 
 
-    def request_title_upscale(self, title_id: int, upscale_params: Dict[str, Any] | None, user: Any) -> None:
+    def request_title_upscale(self, title_id: int, upscale_params: Dict[str, Any] | None, user: Any) -> Job:
         '''
         Prototype: Create an upscale job for a title.
         Pre-conditions:
@@ -90,7 +91,7 @@ class BooksCatalogService:
 
         # The create_job method in JobManagerService is expected to accept a dictionary
         # containing the job's initial data and the user initiating the job.
-        self.jobsManagerService.create_job(job_data, upscale_params, user)
+        return self.jobsManagerService.create_job(job_data, upscale_params, user)
 
     def get_book_details(self, book_id: int) -> Book | None:
         '''

@@ -21,6 +21,9 @@ class JobsManagerService:
     def create_job(self, job_data: Dict, upscale_params: Dict[str, Any] | None, user: Any) -> Job:
         return self.jobsDBRepository.create_job(job_data)
 
+    def delete_job(self, job_id: int) -> bool:
+        return self.jobsDBRepository.delete_job(job_id)
+
     def test_inference(self, job_data: Dict) -> None:
         '''Only for testing purposes'''
         return run_inference_task()

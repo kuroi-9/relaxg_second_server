@@ -25,13 +25,21 @@ class JobsManagerJobsCreate(APIView):
         jobsManagerService.create_job(request.data, {}, None)
         return Response(status=201)
 
+class JobsManagerJobsDelete(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request: Request, job_id: int, *args, **kwargs) -> Response:
+        jobsManagerService = JobsManagerService()
+        jobsManagerService.delete_job(job_id)
+        return Response(status=200)
+
 class JobsManagerInferenceTest(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request: Request, *args, **kwargs) -> Response:
         jobsManagerService = JobsManagerService()
         jobsManagerService.test_inference(request.data)
-        return Response(status=201)
+        return Response(status=200)
 
 class JobsManagerInference(APIView):
     permission_classes = [IsAuthenticated]
@@ -52,4 +60,5 @@ class JobsManagerInference(APIView):
             )
 
         jobsManagerService.process_controller(job_serialized.data)
-        return Response(status=201)
+        # we should return 202 when it will be async? don't know yet
+        return Response(status=200)
