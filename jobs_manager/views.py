@@ -59,6 +59,6 @@ class JobsManagerInference(APIView):
                 }
             )
 
-        jobsManagerService.process_controller(job_serialized.data)
+        jobsManagerService.prepare_inference(job_serialized.data)
         # we should return 202 when it will be async? don't know yet
         return Response(status=200)

@@ -58,7 +58,6 @@ class SingleScannedBookService:
                             "file_path": file_path,
                             "name": file_path.split("/")[-1].rsplit(".", 1)[0],
                             "title": title,
-                            "status": "none"
                         }
                     )
                 except Exception as e:

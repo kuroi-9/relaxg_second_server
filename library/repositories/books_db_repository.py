@@ -72,6 +72,15 @@ class BooksDBRepository:
 
         return Book._default_manager.filter(title=title_name).all().order_by('title')
 
+    def get_title_books_to_process(self, title_name: str) -> List[Book]:
+        '''
+        Retrieves all books associated with a title from the database that are not yet processed.
+        Pre-conditions: 'title_name' is the title of the title.
+        Post-conditions: Returns a list of Book instances.
+        '''
+
+        return Book._default_manager.filter(title=title_name).exclude(status='completed').order_by('name')
+
     def get_book_by_id(self, book_id: int) -> Book | None:
         '''
         Retrieves a book by its ID from the database.

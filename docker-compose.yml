@@ -38,7 +38,14 @@ services:
                           count: 1
                           capabilities: [gpu]
         # command: python manage.py runserver 0.0.0.0:8000
-        command: daphne -b 0.0.0.0 -p 8000 rg_server.asgi:application
+        command: bash commands.sh
+        networks:
+            - relaxg_second_server_default
+
+    redis:
+        image: redis:8.2-alpine
+        ports:
+            - "6379:6379"
         networks:
             - relaxg_second_server_default
 

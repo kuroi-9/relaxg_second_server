@@ -70,7 +70,7 @@ class JobsManagerService:
         for volume in job_volumes_to_process:
             self.localFilesRepository.extraction(jobs_volumes_path, str(volume.file_path))
             #todo: implement inference task in async with built-in django background tasks backend
-            #run_inference_task()
+            run_inference_task.delay()
             if channel_layer:
                 async_to_sync(channel_layer.group_send)(
                     'process_group',
