@@ -16,7 +16,7 @@ class JobsDBRepository:
             raise ObjectDoesNotExist(f"Job with id {job_id} does not exist")
 
     def get_jobs(self) -> List[Job]:
-        return Job._default_manager.all()
+        return Job._default_manager.all().order_by('id')
 
     def update_job(self, job: dict) -> Job:
         job_instance = Job._default_manager.get(id=job['id'])
