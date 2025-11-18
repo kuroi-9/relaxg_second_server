@@ -36,49 +36,30 @@ class JobsManagerService:
         '''
 
         jobs_volumes_path = job_data['title_path']
-        channel_layer = get_channel_layer()
+
+
+        if not jobs_volumes_path:
+            raise ValueError('Invalid job data')
+
+        jobs_volumes_path = os.path.abspath(jobs_volumes_path)
 
         if not os.path.exists(jobs_volumes_path):
-            raise FileNotFoundError(f"Directory {jobs_volumes_path} does not exist")
+            raise FileNotFoundError('Job volume not found')
 
-        # fetch the title books to work with, ordered
+        if not os.path.isdir(jobs_volumes_path):
+            raise NotADirectoryError('Job volume is not a directory')
+
+        if not os.listdir(jobs_volumes_path):
+            raise ValueError('Job volume is empty')
+
+
+        run_inference_task.delay(job_data)
+        channel_layer = get_channel_layer()
         if channel_layer:
             async_to_sync(channel_layer.group_send)(
                 'process_group',
                 {
                     'type': 'process.message',
-                    'message': 'Getting books'
+                    'message': 'Job worker started: ' + str(job_data['title_name']),
                 }
             )
-        job_volumes_to_process = self.booksDBRepository.get_title_books_to_process(job_data['title_name'])
-        job_volumes_names = [volume.name for volume in job_volumes_to_process]
-        for volume in job_volumes_to_process:
-            print(str(volume.name))
-
-        # extracting books to process
-        if channel_layer:
-            async_to_sync(channel_layer.group_send)(
-                'process_group',
-                {
-                    'type': 'process.message',
-                    'message': 'Found to process: ' + str(job_volumes_names),
-                }
-            )
-        else:
-            raise NotImplementedError("Channel layer is not available")
-
-        for volume in job_volumes_to_process:
-            self.localFilesRepository.extraction(jobs_volumes_path, str(volume.file_path))
-            #todo: implement inference task in async with built-in django background tasks backend
-            run_inference_task.delay()
-            if channel_layer:
-                async_to_sync(channel_layer.group_send)(
-                    'process_group',
-                    {
-                        'type': 'process.message',
-                        'message': 'Processing: ' + str(volume.name),
-                    }
-                )
-            else:
-                raise NotImplementedError("Channel layer is not available")
-            break

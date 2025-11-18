@@ -57,7 +57,7 @@ class InferenceImplementation:
                 'process_group',
                 {
                     'type': 'process.message',
-                    'message': 'Image resized, processing...'
+                    'message': 'Inference | Image resized, processing...'
                 }
             )
 
