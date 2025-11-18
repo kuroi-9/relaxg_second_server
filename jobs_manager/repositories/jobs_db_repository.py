@@ -18,9 +18,11 @@ class JobsDBRepository:
     def get_jobs(self) -> List[Job]:
         return Job._default_manager.all()
 
-    def update_job(self, job: Job) -> Job:
-        job.save()
-        return job
+    def update_job(self, job: dict) -> Job:
+        job_instance = Job._default_manager.get(id=job['id'])
+        job_instance.status = job['status']
+        job_instance.save()
+        return job_instance
 
     def delete_job(self, job_id: int) -> bool:
         try:

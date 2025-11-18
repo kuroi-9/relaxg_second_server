@@ -23,11 +23,12 @@ class LocalFilesRepository:
         cbz_files.sort()
         return cbz_files
 
-    def extraction(self, title_dir: str, cbz_file: str):
+    def extraction(self, title_name: str, cbz_file: str) -> str | FileNotFoundError:
         '''
         Prototype: Extracts the contents of a .cbz file located in the specified title directory.
         Pre-conditions:
         - 'title_dir' is the name of the title directory inside '/books/'
+        - 'title_name' is the name of the title.
         - 'cbz_file' is the name of the .cbz file.
         Post-conditions: Extracts the .cbz file into the title directory. Raises FileNotFoundError if the file or directory does not exist.
         '''
@@ -42,13 +43,18 @@ class LocalFilesRepository:
             raise FileNotFoundError(f"The file '{cbz_path}' does not exist.")
 
         # Ensure the extraction directory exists
-        extraction_dir = os.path.join(out_path, title_dir, cbz_file.split("/")[-1].rsplit(".", 1)[0])
+        extraction_dir = os.path.join(out_path, title_name, cbz_file.split("/")[-1].rsplit(".", 1)[0])
         os.makedirs(extraction_dir, exist_ok=True)
 
         # Extract the .cbz file (assuming it's a zip archive)
         import zipfile
         with zipfile.ZipFile(cbz_path, 'r') as zip_ref:
             zip_ref.extractall(extraction_dir)
+
+        if not os.path.exists(extraction_dir):
+            raise FileNotFoundError(f"Error: The directory '{extraction_dir}' not created.")
+
+        return extraction_dir
 
     def resizing(self):
         pass

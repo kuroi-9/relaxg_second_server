@@ -42,17 +42,17 @@ class BooksDBRepository:
         book.save()
         return book
 
-    def update_book(self, book: Book, data: Dict[str, Any]) -> Book:
+    def update_book(self, book: dict) -> Book:
         '''
         Prototype: Updates an existing book.
         Pre-conditions: 'book' is the book instance to update, 'data' are the fields to modify.
         Post-conditions: Returns the updated Book instance.
         '''
 
-        book.file_path = data.get('file_path', book.file_path)
-        book.title = data.get('title', book.title)
-        book.save()
-        return book
+        book_instance = Book._default_manager.get(id=book['id'])
+        book_instance.status = book["status"]
+        book_instance.save()
+        return book_instance
 
     def get_title_by_filepath(self, title_filepath: str) -> Title | None:
         '''
