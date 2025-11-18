@@ -9,6 +9,9 @@ from spandrel import ImageModelDescriptor, ModelLoader
 from .image_dimension.resize import resize_to_side
 from .api.lazy import Lazy
 from pathlib import Path
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+
 
 class InferenceImplementation:
     def __init__(self):
@@ -47,6 +50,16 @@ class InferenceImplementation:
             resize_to_side.ResizeCondition.DOWNSCALE,
             resize.ResizeFilter.LANCZOS,
         )
+
+        channel_layer = get_channel_layer()
+        if channel_layer:
+            async_to_sync(channel_layer.group_send)(
+                'process_group',
+                {
+                    'type': 'process.message',
+                    'message': 'Image resized, processing...'
+                }
+            )
 
         # process image
         img_out = auto_split.pytorch_auto_split(img_rts, model, device_gpu, False, tiler)

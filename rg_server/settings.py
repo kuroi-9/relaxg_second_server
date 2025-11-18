@@ -73,9 +73,12 @@ ASGI_APPLICATION = "rg_server.asgi.application"
 # For development, use in-memory backend
 
 CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels.layers.InMemoryChannelLayer'
-    }
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("redis", 6379)],
+        },
+    },
 }
 
 CSRF_COOKIE_SAMESITE = config(

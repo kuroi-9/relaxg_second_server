@@ -2,6 +2,7 @@ daphne
 python-decouple
 django
 channels
+channels-redis
 djangorestframework
 djangorestframework-simplejwt
 django-cors-headers
