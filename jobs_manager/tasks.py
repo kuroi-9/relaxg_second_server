@@ -43,7 +43,7 @@ def run_inference_task(job_data: dict):
         raise NotImplementedError("Channel layer is not available")
 
     for volume in job_volumes_to_process:
-        volume_extraction_path = localFilesRepository.extraction(job_data['title_path'], str(volume.title.name), str(volume.file_path))
+        volume_extraction_path = localFilesRepository.extraction(str(volume.title.name), str(volume.file_path))
 
         print("Running inference task")
 
