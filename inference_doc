@@ -1,6 +1,0 @@
-start from database
-- fetch the title books ordered
-first book not with status "completed" found ?
-- mark the book status as "processing"
-- start a "processing" shared_task worker for it
-- return 202
