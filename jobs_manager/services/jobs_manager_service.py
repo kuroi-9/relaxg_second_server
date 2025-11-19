@@ -4,7 +4,7 @@ from jobs_manager.models import Job
 from jobs_manager.repositories.jobs_db_repository import JobsDBRepository
 from jobs_manager.repositories.local_files_repository import LocalFilesRepository
 from library.repositories.books_db_repository import BooksDBRepository
-from jobs_manager.tasks import run_inference_task
+from jobs_manager.tasks import run_job_worker_task
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 
@@ -28,15 +28,14 @@ class JobsManagerService:
 
     def test_inference(self, job_data: Dict) -> None:
         '''Only for testing purposes'''
-        return run_inference_task()
+        return run_job_worker_task()
 
-    def prepare_inference(self, job_data: Dict) -> None:
+    def prepare_job_worker(self, job_data: Dict) -> None:
         '''
-        Orchestrates the whole processing of a job.
+        Verifies that a created job can be ran, and start the associated worker
         '''
 
         jobs_volumes_path = job_data['title_path']
-
 
         if not jobs_volumes_path:
             raise ValueError('Invalid job data')
@@ -53,7 +52,7 @@ class JobsManagerService:
             raise ValueError('Job volume is empty')
 
 
-        run_inference_task.delay(job_data)
+        run_job_worker_task.delay(job_data)
         channel_layer = get_channel_layer()
         if channel_layer:
             async_to_sync(channel_layer.group_send)(

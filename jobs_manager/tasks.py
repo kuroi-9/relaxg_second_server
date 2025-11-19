@@ -15,7 +15,12 @@ booksDBRepository = BooksDBRepository()
 jobsDBRepository = JobsDBRepository()
 
 @shared_task
-def run_inference_task(job_data: dict):
+def run_job_worker_task(job_data: dict):
+    '''
+    Orchestrate the whole processing of a job
+    Run inference tasks
+    '''
+
     channel_layer = get_channel_layer()
     if channel_layer:
         async_to_sync(channel_layer.group_send)(
