@@ -32,8 +32,18 @@ def run_job_worker_task(job_data: dict):
         )
     job_volumes_to_process = booksDBRepository.get_title_books_to_process(job_data['title_name'])
     job_volumes_names = [volume.name for volume in job_volumes_to_process]
-    for volume in job_volumes_to_process:
+    job_volumes_progress = [0] * len(job_volumes_to_process)
+    for index, volume in enumerate(job_volumes_to_process):
         print(str(volume.name))
+        if os.path.exists(f"/out/outputs/{volume.title.name}/{volume.name}"):
+            if os.path.exists(f"/out/{volume.title.name}/{volume.name}"):
+                current_volume_total_files = len(os.listdir(f"/out/{volume.title.name}/{volume.name}"))
+                current_volume_processed_files = len(os.listdir(f"/out/outputs/{volume.title.name}/{volume.name}"))
+                job_volumes_progress[index] = round(float((current_volume_processed_files / current_volume_total_files) * 100), 2)
+            else:
+                job_volumes_progress[index] = 0
+        else:
+            print(f"Volume {volume.name} not processed")
 
     # extracting books to process
     if channel_layer:
@@ -47,15 +57,29 @@ def run_job_worker_task(job_data: dict):
     else:
         raise NotImplementedError("Channel layer is not available")
 
-    for volume in job_volumes_to_process:
+    # HERE: Send process.progress message init progress status
+    if channel_layer:
+        async_to_sync(channel_layer.group_send)(
+            'process_group',
+            {
+                'type': 'process.progress',
+                'title_name': job_data["title_name"],
+                'percentages': job_volumes_progress
+            }
+        )
+
+    #=========
+    # Per volume worker
+    #=========
+    for index, volume in enumerate(job_volumes_to_process):
         volume_extraction_path = localFilesRepository.extraction(str(volume.title.name), str(volume.file_path))
 
         print("Running inference task")
 
 
         files_to_process = sorted([os.path.join(volume_extraction_path, f) for f in os.listdir(volume_extraction_path)])
-        files_count = len(files_to_process)
-        processed_files = 0
+        current_volume_total_files = len(files_to_process)
+        current_volume_processed_files = 0
         for image_full_path in files_to_process:
             image_name = os.path.splitext(os.path.basename(image_full_path))[0]
             if not os.path.exists(f"/out/outputs/{volume.title.name}/{volume.name}/{image_name} processed.jpg"):
@@ -74,7 +98,7 @@ def run_job_worker_task(job_data: dict):
                 )
                 if os.path.exists(f"/out/outputs/{volume.title.name}/{volume.name}/{image_name} processed.jpg"):
                     # update job and book status etc
-                    processed_files += 1
+                    current_volume_processed_files += 1
                     serialized_book_data = BookDetailSerializer(volume).data
                     job_data['status'] = 'partial'
                     serialized_book_data['status'] = 'partial'
@@ -90,15 +114,27 @@ def run_job_worker_task(job_data: dict):
                             }
                         )
             else:
-                processed_files += 1
+                current_volume_processed_files += 1
                 if channel_layer:
                     async_to_sync(channel_layer.group_send)(
                         'process_group',
                         {
                             'type': 'process.message',
-                            'message': f'Inference | Image {str(processed_files)} already processed !'
+                            'message': f'Inference | Image {str(current_volume_processed_files)} already processed !'
                         }
                     )
+
+            # HERE: Send process.progress message,
+            # update progress status each files
+            job_volumes_progress[index] = round(float((current_volume_processed_files / current_volume_total_files) * 100), 2)
+            async_to_sync(channel_layer.group_send)(
+                'process_group',
+                {
+                    'type': 'process.progress',
+                    'title_name': job_data["title_name"],
+                    'percentages': job_volumes_progress
+                }
+            )
 
 
 

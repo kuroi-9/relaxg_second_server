@@ -79,7 +79,7 @@ class BooksDBRepository:
         Post-conditions: Returns a list of Book instances.
         '''
 
-        return Book._default_manager.filter(title=title_name).exclude(status='completed').order_by('name')
+        return Book._default_manager.filter(title=title_name).order_by('name')
 
     def get_book_by_id(self, book_id: int) -> Book | None:
         '''
