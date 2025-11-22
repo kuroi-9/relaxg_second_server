@@ -7,6 +7,7 @@ from library.repositories.books_db_repository import BooksDBRepository
 from jobs_manager.tasks import run_job_worker_task
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
+from celery.result import AsyncResult
 
 class JobsManagerService:
     def __init__(self, jobs_db_repo=JobsDBRepository, local_files_repo=LocalFilesRepository, books_db_repo=BooksDBRepository):
@@ -30,7 +31,25 @@ class JobsManagerService:
         '''Only for testing purposes'''
         return run_job_worker_task()
 
-    def prepare_job_worker(self, job_data: Dict) -> None:
+    def get_job_status(self, job_id: int):
+        job = self.get_job(job_id)
+        task_id = job.last_task_id
+        print(f"Getting status for task {task_id}")
+        res = AsyncResult(task_id).state
+        return res
+
+    def stop_job(self, job_id: int):
+        job = self.get_job(job_id)
+        task_id = job.last_task_id
+        try:
+            print(f"Canceling task {task_id}")
+            AsyncResult(task_id).revoke(terminate=True)
+        except Exception as e:
+            print(f"Error canceling task {task_id}: {e}")
+            return 500
+        return 200
+
+    def prepare_job_worker(self, job_data: Dict) -> bool:
         '''
         Verifies that a created job can be ran, and start the associated worker
         '''
@@ -52,7 +71,13 @@ class JobsManagerService:
             raise ValueError('Job volume is empty')
 
 
-        run_job_worker_task.delay(job_data)
+        task_id = run_job_worker_task.delay(job_data)
+        job_data['last_task_id'] = task_id
+        try:
+            self.jobsDBRepository.update_job(job_data)
+        except Exception as e:
+            print(f"Error updating job data: {e}")
+            return False
         channel_layer = get_channel_layer()
         if channel_layer:
             async_to_sync(channel_layer.group_send)(
@@ -62,3 +87,4 @@ class JobsManagerService:
                     'message': 'Job worker started: ' + str(job_data['title_name']),
                 }
             )
+        return True

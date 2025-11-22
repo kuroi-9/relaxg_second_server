@@ -14,8 +14,8 @@ localFilesRepository = LocalFilesRepository()
 booksDBRepository = BooksDBRepository()
 jobsDBRepository = JobsDBRepository()
 
-@shared_task
-def run_job_worker_task(job_data: dict):
+@shared_task(bind=True, track_started=True)
+def run_job_worker_task(self, job_data: dict):
     '''
     Orchestrate the whole processing of a job
     Run inference tasks

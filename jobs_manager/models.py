@@ -26,3 +26,4 @@ class Job(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     completed_at = models.DateTimeField(null=True, blank=True)
     used_model_name = models.TextField()
+    last_task_id = models.CharField(max_length=255, null=True, blank=True)

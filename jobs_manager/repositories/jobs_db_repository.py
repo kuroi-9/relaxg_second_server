@@ -20,7 +20,8 @@ class JobsDBRepository:
 
     def update_job(self, job: dict) -> Job:
         job_instance = Job._default_manager.get(id=job['id'])
-        job_instance.status = job['status']
+        job_instance.status = job.get('status', job_instance.status)
+        job_instance.last_task_id = job.get('last_task_id', job_instance.last_task_id)
         job_instance.save()
         return job_instance
 

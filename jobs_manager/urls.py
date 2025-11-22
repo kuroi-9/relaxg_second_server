@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import JobsManagerJobs, JobsManagerInferenceTest, JobsManagerInference, JobsManagerJobsCreate, JobsManagerJobsDelete
+from .views import JobsManagerJobs, JobsManagerInferenceTest, JobsManagerInference, JobsManagerJobsCreate, JobsManagerJobsDelete, JobsManagerGetJobStatus, JobsManagerStopJob
 
 urlpatterns = [
     path('all/', JobsManagerJobs.as_view(), name='jobs-manager-jobs'),
@@ -7,4 +7,6 @@ urlpatterns = [
     path('inference/', JobsManagerInference.as_view(), name='jobs-manager-inference'),
     path('create/', JobsManagerJobsCreate.as_view(), name='jobs-manager-create'),
     path('delete/<int:job_id>', JobsManagerJobsDelete.as_view(), name='jobs-manager-delete'),
+    path('status/<int:job_id>', JobsManagerGetJobStatus.as_view(), name='jobs-manager-status'),
+    path('stop/<int:job_id>', JobsManagerStopJob.as_view(), name='jobs-manager-stop'),
 ]
