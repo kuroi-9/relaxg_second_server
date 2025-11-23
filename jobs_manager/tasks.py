@@ -15,6 +15,38 @@ booksDBRepository = BooksDBRepository()
 jobsDBRepository = JobsDBRepository()
 
 @shared_task(bind=True, track_started=True)
+def calculate_job_progress(self, title_name: str) -> list:
+    '''
+    This function calculates the progress of a job based on the number of processed files.
+    Intended to be used only to calculate the initial progress of a job.
+    '''
+
+    channel_layer = get_channel_layer()
+    job_volumes_to_process = booksDBRepository.get_title_books_to_process(title_name)
+    job_volumes_progress = [0] * len(job_volumes_to_process)
+    for index, volume in enumerate(job_volumes_to_process):
+        print(str(volume.name))
+        if os.path.exists(f"/out/outputs/{volume.title.name}/{volume.name}"):
+            if os.path.exists(f"/out/{volume.title.name}/{volume.name}"):
+                current_volume_total_files = len(os.listdir(f"/out/{volume.title.name}/{volume.name}"))
+                current_volume_processed_files = len(os.listdir(f"/out/outputs/{volume.title.name}/{volume.name}"))
+                job_volumes_progress[index] = round(float((current_volume_processed_files / current_volume_total_files) * 100), 2)
+            else:
+                job_volumes_progress[index] = 0
+
+    if channel_layer:
+        async_to_sync(channel_layer.group_send)(
+            'process_group',
+            {
+                'type': 'process.progress',
+                'title_name': title_name,
+                'percentages': job_volumes_progress
+            }
+        )
+
+    return job_volumes_progress
+
+@shared_task(bind=True, track_started=True)
 def run_job_worker_task(self, job_data: dict):
     '''
     Orchestrate the whole processing of a job
@@ -30,20 +62,10 @@ def run_job_worker_task(self, job_data: dict):
                 'message': 'Job worker | Getting books'
             }
         )
-    job_volumes_to_process = booksDBRepository.get_title_books_to_process(job_data['title_name'])
+
+    job_volumes_to_process = booksDBRepository.get_title_books_to_process(job_data["title_name"])
     job_volumes_names = [volume.name for volume in job_volumes_to_process]
-    job_volumes_progress = [0] * len(job_volumes_to_process)
-    for index, volume in enumerate(job_volumes_to_process):
-        print(str(volume.name))
-        if os.path.exists(f"/out/outputs/{volume.title.name}/{volume.name}"):
-            if os.path.exists(f"/out/{volume.title.name}/{volume.name}"):
-                current_volume_total_files = len(os.listdir(f"/out/{volume.title.name}/{volume.name}"))
-                current_volume_processed_files = len(os.listdir(f"/out/outputs/{volume.title.name}/{volume.name}"))
-                job_volumes_progress[index] = round(float((current_volume_processed_files / current_volume_total_files) * 100), 2)
-            else:
-                job_volumes_progress[index] = 0
-        else:
-            print(f"Volume {volume.name} not processed")
+    job_volumes_progress = calculate_job_progress(job_data["title_name"])
 
     # extracting books to process
     if channel_layer:

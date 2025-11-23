@@ -18,6 +18,15 @@ class JobsManagerJobs(APIView):
         serializer = JobsListSerializer(jobs, many=True)
         return Response(serializer.data)
 
+class JobsManagerJobsProgress(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request: Request, *args, **kwargs) -> Response:
+        jobsManagerService = JobsManagerService()
+        if jobsManagerService.get_jobs_progress():
+            return Response(status=200)
+        return Response(status=500)
+
 class JobsManagerJobsCreate(APIView):
     permission_classes = [IsAuthenticated]
 

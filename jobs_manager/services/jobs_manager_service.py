@@ -4,7 +4,7 @@ from jobs_manager.models import Job
 from jobs_manager.repositories.jobs_db_repository import JobsDBRepository
 from jobs_manager.repositories.local_files_repository import LocalFilesRepository
 from library.repositories.books_db_repository import BooksDBRepository
-from jobs_manager.tasks import run_job_worker_task
+from jobs_manager.tasks import run_job_worker_task, calculate_job_progress
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from celery.result import AsyncResult
@@ -17,6 +17,15 @@ class JobsManagerService:
 
     def get_jobs(self) -> List[Job]:
         return self.jobsDBRepository.get_jobs()
+
+    def get_jobs_progress(self) -> bool:
+        try:
+            jobs = self.jobsDBRepository.get_jobs()
+            for job in jobs:
+                calculate_job_progress(job.title_name)
+        except Exception as e:
+            print(f"Error getting jobs progress: {e}")
+        return True
 
     def get_job(self, job_id: int) -> Job:
         return self.jobsDBRepository.get_job(job_id)
