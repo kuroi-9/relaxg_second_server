@@ -8,6 +8,7 @@ from jobs_manager.tasks import run_job_worker_task, calculate_job_progress
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from celery.result import AsyncResult
+from rg_server.celery import app as celery_app
 
 class JobsManagerService:
     def __init__(self, jobs_db_repo=JobsDBRepository, local_files_repo=LocalFilesRepository, books_db_repo=BooksDBRepository):
@@ -47,8 +48,16 @@ class JobsManagerService:
         job = self.get_job(job_id)
         task_id = job.last_task_id
         print(f"Getting status for task {task_id}")
-        res = AsyncResult(task_id).state
-        return res
+
+        active_tasks = celery_app.control.inspect().active()
+        for running_tasks in active_tasks.items():
+            for task in running_tasks:
+                if len(task) > 0 and "id" in task[0] and task[0]["id"] == task_id:
+                    print(f"Task {task_id} is running")
+                    return True
+
+        print(f"Task {task_id} not running")
+        return False
 
     def stop_job(self, job_id: int):
         job = self.get_job(job_id)
