@@ -63,6 +63,7 @@ class JobsManagerService:
         Verifies that a created job can be ran, and start the associated worker
         '''
 
+        self.stop_job(job_data['id'])
         jobs_volumes_path = job_data['title_path']
 
         if not jobs_volumes_path:
@@ -81,6 +82,7 @@ class JobsManagerService:
 
 
         task_id = run_job_worker_task.delay(job_data)
+        print(f"Starting task {task_id}")
         job_data['last_task_id'] = task_id
         try:
             self.jobsDBRepository.update_job(job_data)
