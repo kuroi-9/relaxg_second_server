@@ -34,7 +34,10 @@ class JobsManagerService:
         return self.jobsDBRepository.create_job(job_data)
 
     def delete_job(self, job_id: int) -> bool:
-        return self.jobsDBRepository.delete_job(job_id)
+        res = self.stop_job(job_id)
+        if res == 200:
+            return self.jobsDBRepository.delete_job(job_id)
+        return False
 
     def test_inference(self, job_data: Dict) -> None:
         '''Only for testing purposes'''
