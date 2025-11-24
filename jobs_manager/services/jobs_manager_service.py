@@ -49,10 +49,11 @@ class JobsManagerService:
         task_id = job.last_task_id
         print(f"Getting status for task {task_id}")
 
-        active_tasks = celery_app.control.inspect().active()
-        for running_tasks in active_tasks.items():
-            for task in running_tasks:
-                if len(task) > 0 and "id" in task[0] and task[0]["id"] == task_id:
+        celery_worker = celery_app.control.inspect().active()
+        running_tasks = list(celery_worker.values())[0]
+        print(running_tasks)
+        for task in running_tasks:
+              if task["id"] == task_id:  
                     print(f"Task {task_id} is running")
                     return True
 

@@ -18,3 +18,4 @@ jobs_manager/services/__pycache__
 jobs_manager/tests/__pycache__
 inference_implementation/*.pth
 inference_implementation/*.jpg
+inference_implementation/**/__pycache__/
