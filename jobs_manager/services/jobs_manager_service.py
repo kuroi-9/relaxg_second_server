@@ -36,9 +36,11 @@ class JobsManagerService:
 
     def delete_job(self, job_id: int) -> bool:
         res = self.stop_job(job_id)
-        if res == 200:
-            return self.jobsDBRepository.delete_job(job_id)
-        return False
+        if res:
+            print(f"Job {job_id} stopped")
+        else:
+            print(f"Job {job_id} not stopped, probably not running")
+        return self.jobsDBRepository.delete_job(job_id)
 
     def test_inference(self, job_data: Dict) -> None:
         '''Only for testing purposes'''
@@ -53,14 +55,14 @@ class JobsManagerService:
         running_tasks = list(celery_worker.values())[0]
         print(running_tasks)
         for task in running_tasks:
-              if task["id"] == task_id:  
+              if task["id"] == task_id:
                     print(f"Task {task_id} is running")
                     return True
 
         print(f"Task {task_id} not running")
         return False
 
-    def stop_job(self, job_id: int):
+    def stop_job(self, job_id: int) -> bool:
         job = self.get_job(job_id)
         task_id = job.last_task_id
         try:
@@ -68,8 +70,8 @@ class JobsManagerService:
             AsyncResult(task_id).revoke(terminate=True)
         except Exception as e:
             print(f"Error canceling task {task_id}: {e}")
-            return 500
-        return 200
+            return False
+        return True
 
     def prepare_job_worker(self, job_data: Dict) -> bool:
         '''
