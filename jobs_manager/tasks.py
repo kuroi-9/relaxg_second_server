@@ -1,4 +1,5 @@
 from celery import shared_task
+from rg_server.celery import app
 from inference_implementation.inference import InferenceImplementation
 from jobs_manager.repositories.local_files_repository import LocalFilesRepository
 from channels.layers import get_channel_layer
@@ -46,7 +47,7 @@ def calculate_job_progress(self, title_name: str) -> list:
 
     return job_volumes_progress
 
-@shared_task(bind=True, track_started=True)
+@app.task(bind=True, track_started=True)
 def run_job_worker_task(self, job_data: dict):
     '''
     Orchestrate the whole processing of a job
@@ -157,6 +158,21 @@ def run_job_worker_task(self, job_data: dict):
                     'percentages': job_volumes_progress
                 }
             )
+
+@app.task(bind=True, track_started=True)
+def process_success(self, unknown_arg, job_data):
+    channel_layer = get_channel_layer()
+    print(job_data)
+    if channel_layer:
+        async_to_sync(channel_layer.group_send)(
+            'process_group',
+            {
+                'type': 'process.success',
+                'job_id': job_data["id"],
+                'job_name': job_data["title_name"],
+                'success': True
+            }
+        )
 
 
 

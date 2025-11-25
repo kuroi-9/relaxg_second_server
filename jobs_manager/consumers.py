@@ -96,3 +96,21 @@ class ProcessConsumer(AsyncWebsocketConsumer):
             "title_name": title_name,
             "percentages": percentages
         }))
+
+    async def process_success(self, event):
+        job_name = event["job_name"]
+        job_id = event["job_id"]
+        print(f'Inference completed successfully: {job_id}')
+        await self.send(text_data=json.dumps({
+            "message": f'Inference completed successfully: {job_name}',
+            "job_id": job_id,
+            "job_name": job_name,
+            "success": True
+        }))
+
+    async def process_error(self, event):
+        job_name = event["job_name"]
+        await self.send(text_data=json.dumps({
+            "message": f'Error occurred during inference: {job_name}',
+            "error": True
+        }))
