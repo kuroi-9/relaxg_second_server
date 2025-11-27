@@ -4,6 +4,8 @@
 .zed
 db
 
+static
+
 rg_server/__pycache__
 rg_server/migrations
 library/__pycache__

@@ -170,11 +170,22 @@ def process_success(self, unknown_arg, job_data):
                 'type': 'process.success',
                 'job_id': job_data["id"],
                 'job_name': job_data["title_name"],
-                'success': True
             }
         )
 
-
+@app.task(bind=True, track_started=True)
+def process_error(self, unknown_arg, job_data):
+    channel_layer = get_channel_layer()
+    print(job_data)
+    if channel_layer:
+        async_to_sync(channel_layer.group_send)(
+            'process_group',
+            {
+                'type': 'process.error',
+                'job_id': job_data["id"],
+                'job_name': job_data["title_name"],
+            }
+        )
 
 def enhancement():
     pass

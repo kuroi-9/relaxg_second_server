@@ -12,6 +12,8 @@ from rg_server.views import (
     PublicInfoView,
     get_csrf_token
 )
+from django.conf.urls.static import static
+from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -43,4 +45,4 @@ urlpatterns = [
 
     # Jobs Manager app views
     path('api/jobs/', include('jobs_manager.urls'))
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

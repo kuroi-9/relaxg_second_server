@@ -30,6 +30,8 @@ SECRET_KEY = config("SIGNING_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+SECURE_CONTENT_TYPE_NOSNIFF = False
+
 # Don't use 127.0.0.1, nor allow it
 # config("VPS_IP_ADRESS") is the VPS (tailscale)
 # "0.0.0.0" is the network gateway

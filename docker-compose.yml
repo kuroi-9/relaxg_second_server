@@ -25,6 +25,7 @@ services:
             - ${BOOKS_DIR}:/books
             - ${OUT_DIR}:/out
             - ${BOOKS_DIR}/covers:/covers
+            - ./static:/static
         environment:
             - PYTHONDONTWRITEBYTECODE=1
             - PYTHONUNBUFFERED=1

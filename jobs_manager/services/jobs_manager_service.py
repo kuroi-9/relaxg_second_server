@@ -4,7 +4,7 @@ from jobs_manager.models import Job
 from jobs_manager.repositories.jobs_db_repository import JobsDBRepository
 from jobs_manager.repositories.local_files_repository import LocalFilesRepository
 from library.repositories.books_db_repository import BooksDBRepository
-from jobs_manager.tasks import run_job_worker_task, calculate_job_progress, process_success
+from jobs_manager.tasks import run_job_worker_task, calculate_job_progress, process_success, process_error
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from celery.result import AsyncResult
@@ -97,7 +97,11 @@ class JobsManagerService:
             raise ValueError('Job volume is empty')
 
 
-        task_id = run_job_worker_task.apply_async((job_data,), link=process_success.signature((job_data,)))
+        task_id = run_job_worker_task.apply_async(
+            (job_data,),
+            link=process_success.signature((job_data,)),
+            link_error=process_error.signature((job_data,))
+        )
         print(f"Starting task {task_id}")
         job_data['last_task_id'] = task_id
         try:

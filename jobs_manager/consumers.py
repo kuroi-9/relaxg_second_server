@@ -110,7 +110,10 @@ class ProcessConsumer(AsyncWebsocketConsumer):
 
     async def process_error(self, event):
         job_name = event["job_name"]
+        job_id = event["job_id"]
         await self.send(text_data=json.dumps({
             "message": f'Error occurred during inference: {job_name}',
-            "error": True
+            "job_id": job_id,
+            "job_name": job_name,
+            "fail": True
         }))
