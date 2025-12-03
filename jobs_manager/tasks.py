@@ -141,6 +141,7 @@ def run_job_worker_task(self, job_data: dict):
                     serialized_book_data['status'] = 'partial'
                     jobsDBRepository.update_job(job_data)
                     booksDBRepository.update_book(serialized_book_data)
+                    job_volumes_progress[index] = round(float((current_volume_processed_files / current_volume_total_files) * 100), 2)
 
                     if channel_layer:
                         async_to_sync(channel_layer.group_send)(
@@ -162,6 +163,8 @@ def run_job_worker_task(self, job_data: dict):
                         )
             else:
                 current_volume_processed_files += 1
+                job_volumes_progress[index] = round(float((current_volume_processed_files / current_volume_total_files) * 100), 2)
+
                 if channel_layer:
                     async_to_sync(channel_layer.group_send)(
                         'process_group',
@@ -183,7 +186,6 @@ def run_job_worker_task(self, job_data: dict):
 
             # HERE: Send process.progress message,
             # update progress status each files
-            job_volumes_progress[index] = round(float((current_volume_processed_files / current_volume_total_files) * 100), 2)
 
 @app.task(bind=True, track_started=True)
 def process_success(self, unknown_arg, job_data):
