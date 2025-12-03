@@ -16,7 +16,7 @@ booksDBRepository = BooksDBRepository()
 jobsDBRepository = JobsDBRepository()
 
 @shared_task(bind=True, track_started=True)
-def calculate_job_progress(self, title_name: str) -> list:
+def calculate_job_progress(self, id: int, title_name: str) -> list:
     '''
     This function calculates the progress of a job based on the number of processed files.
     Intended to be used only to calculate the initial progress of a job.
@@ -40,6 +40,7 @@ def calculate_job_progress(self, title_name: str) -> list:
             'process_group',
             {
                 'type': 'process.progress',
+                'id': id,
                 'title_name': title_name,
                 'percentages': job_volumes_progress,
                 'step': 'Verifying'
@@ -67,7 +68,7 @@ def run_job_worker_task(self, job_data: dict):
 
     job_volumes_to_process = booksDBRepository.get_title_books_to_process(job_data["title_name"])
     job_volumes_names = [volume.name for volume in job_volumes_to_process]
-    job_volumes_progress = calculate_job_progress(job_data["title_name"])
+    job_volumes_progress = calculate_job_progress(id=job_data["id"], title_name=job_data["title_name"])
 
     # extracting books to process
     if channel_layer:
@@ -87,6 +88,7 @@ def run_job_worker_task(self, job_data: dict):
             'process_group',
             {
                 'type': 'process.progress',
+                'id': job_data["id"],
                 'title_name': job_data["title_name"],
                 'percentages': job_volumes_progress,
                 'step': 'Initializing'
@@ -116,6 +118,16 @@ def run_job_worker_task(self, job_data: dict):
                             'message': f'Inference | Processing image: {image_full_path}'
                         }
                     )
+                    async_to_sync(channel_layer.group_send)(
+                        'process_group',
+                        {
+                            'type': 'process.progress',
+                            'id': job_data["id"],
+                            'title_name': job_data["title_name"],
+                            'percentages': job_volumes_progress,
+                            'step': 'Running'
+                        }
+                    )
                 inferenceImplementation.process_image(
                     image_full_path,
                     "/app/inference_implementation/4x-eula-digimanga-bw-v2-nc1.pth",
@@ -138,6 +150,16 @@ def run_job_worker_task(self, job_data: dict):
                                 'message': f'Inference | Image processed !'
                             }
                         )
+                        async_to_sync(channel_layer.group_send)(
+                            'process_group',
+                            {
+                                'type': 'process.progress',
+                                'id': job_data["id"],
+                                'title_name': job_data["title_name"],
+                                'percentages': job_volumes_progress,
+                                'step': 'Running'
+                            }
+                        )
             else:
                 current_volume_processed_files += 1
                 if channel_layer:
@@ -148,19 +170,20 @@ def run_job_worker_task(self, job_data: dict):
                             'message': f'Inference | Image {str(current_volume_processed_files)} already processed !'
                         }
                     )
+                    async_to_sync(channel_layer.group_send)(
+                        'process_group',
+                        {
+                            'type': 'process.progress',
+                            'id': job_data["id"],
+                            'title_name': job_data["title_name"],
+                            'percentages': job_volumes_progress,
+                            'step': 'Verifying'
+                        }
+                    )
 
             # HERE: Send process.progress message,
             # update progress status each files
             job_volumes_progress[index] = round(float((current_volume_processed_files / current_volume_total_files) * 100), 2)
-            async_to_sync(channel_layer.group_send)(
-                'process_group',
-                {
-                    'type': 'process.progress',
-                    'title_name': job_data["title_name"],
-                    'percentages': job_volumes_progress,
-                    'step': 'Running'
-                }
-            )
 
 @app.task(bind=True, track_started=True)
 def process_success(self, unknown_arg, job_data):

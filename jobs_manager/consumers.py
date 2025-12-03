@@ -91,10 +91,14 @@ class ProcessConsumer(AsyncWebsocketConsumer):
     async def process_progress(self, event):
         title_name = event["title_name"]
         percentages = "|".join(str(p) for p in event["percentages"])
+        step = event["step"]
+        id = event["id"]
         await self.send(text_data=json.dumps({
             "message": f'Inference progress | volumes progress object updated',
+            'id': id,
             "title_name": title_name,
-            "percentages": percentages
+            "percentages": percentages,
+            "step": step
         }))
 
     async def process_success(self, event):

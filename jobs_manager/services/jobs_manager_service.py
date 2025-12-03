@@ -24,7 +24,7 @@ class JobsManagerService:
         try:
             jobs = self.jobsDBRepository.get_jobs()
             for job in jobs:
-                calculate_job_progress(job.title_name)
+                calculate_job_progress(id=job.id, title_name=job.title_name)
         except Exception as e:
             print(f"Error getting jobs progress: {e}")
         return True
