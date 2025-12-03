@@ -41,7 +41,8 @@ def calculate_job_progress(self, title_name: str) -> list:
             {
                 'type': 'process.progress',
                 'title_name': title_name,
-                'percentages': job_volumes_progress
+                'percentages': job_volumes_progress,
+                'step': 'Verifying'
             }
         )
 
@@ -87,7 +88,8 @@ def run_job_worker_task(self, job_data: dict):
             {
                 'type': 'process.progress',
                 'title_name': job_data["title_name"],
-                'percentages': job_volumes_progress
+                'percentages': job_volumes_progress,
+                'step': 'Initializing'
             }
         )
 
@@ -155,7 +157,8 @@ def run_job_worker_task(self, job_data: dict):
                 {
                     'type': 'process.progress',
                     'title_name': job_data["title_name"],
-                    'percentages': job_volumes_progress
+                    'percentages': job_volumes_progress,
+                    'step': 'Running'
                 }
             )
 
