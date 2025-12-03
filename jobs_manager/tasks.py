@@ -125,7 +125,7 @@ def run_job_worker_task(self, job_data: dict):
                             'id': job_data["id"],
                             'title_name': job_data["title_name"],
                             'percentages': job_volumes_progress,
-                            'step': 'Running'
+                            'step': 'Inference'
                         }
                     )
                 inferenceImplementation.process_image(
@@ -158,7 +158,7 @@ def run_job_worker_task(self, job_data: dict):
                                 'id': job_data["id"],
                                 'title_name': job_data["title_name"],
                                 'percentages': job_volumes_progress,
-                                'step': 'Running'
+                                'step': 'Inference'
                             }
                         )
             else:
