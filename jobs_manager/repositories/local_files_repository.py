@@ -2,7 +2,6 @@ import os
 from typing import List
 
 class LocalFilesRepository:
-
     def __init__(self):
         pass
 
@@ -23,7 +22,7 @@ class LocalFilesRepository:
         cbz_files.sort()
         return cbz_files
 
-    def extraction(self, title_name: str, cbz_file: str) -> str | FileNotFoundError:
+    def extract(self, title_name: str, cbz_file: str) -> str | FileNotFoundError:
         '''
         Prototype: Extracts the contents of a .cbz file located in the specified title directory.
         Pre-conditions:
@@ -56,8 +55,7 @@ class LocalFilesRepository:
 
         return extraction_dir
 
-    def resizing(self):
-        pass
 
-    def finalization(self):
+    def archive(self):
+        '''TODO: Archives the extracted files into a .cbz file.'''
         pass

@@ -99,7 +99,7 @@ def run_job_worker_task(self, job_data: dict):
     # Per volume worker
     #=========
     for index, volume in enumerate(job_volumes_to_process):
-        volume_extraction_path = localFilesRepository.extraction(str(volume.title.name), str(volume.file_path))
+        volume_extraction_path = localFilesRepository.extract(str(volume.title.name), str(volume.file_path))
 
         print("Running inference task")
 
@@ -183,9 +183,8 @@ def run_job_worker_task(self, job_data: dict):
                             'step': 'Verifying'
                         }
                     )
-
-            # HERE: Send process.progress message,
-            # update progress status each files
+        # TODO
+        # localFilesRepository.archive()
 
 @app.task(bind=True, track_started=True)
 def process_success(self, unknown_arg, job_data):
