@@ -60,7 +60,8 @@ class BooksCatalogService:
         - Raises an Exception (e.g., PermissionError) if the directory is not accessible.
         '''
 
-        return initiate_library_scan_task(scan_directory_path, user_id)
+        res = initiate_library_scan_task.apply((scan_directory_path, user_id,),)
+        return res.successful()
 
 
     def request_title_upscale(self, title_id: int, upscale_params: Dict[str, Any] | None, user: Any) -> Job:
