@@ -56,7 +56,7 @@ class BooksCatalogService:
         - 'scan_directory_path' is the path of the directory to scan or None (for default).
         - 'user_id' is the ID of the user who triggered the scan.
         Post-conditions:
-        - Returns True if the scan process is launched successfully (delegation to a Celery task).
+        - Returns True if the scan process is completed successfully.
         - Raises an Exception (e.g., PermissionError) if the directory is not accessible.
         '''
 

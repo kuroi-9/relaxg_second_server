@@ -77,8 +77,11 @@ class LibraryRefreshAPIView(APIView):
 
     def post(self, request: Request, *args, **kwargs) -> Response:
         booksCatalogService = BooksCatalogService()
-        booksCatalogService.initiate_library_scan(None, request.user.id)
-        return Response({"content_type": "application/json", "message": "Scan launched successfully, please wait for the scan to complete."}, status=202)
+        result = booksCatalogService.initiate_library_scan(None, request.user.id)
+        if result:
+            return Response({"content_type": "application/json", "message": "Scan completed successfully.", "result": result}, status=200)
+        else:
+            return Response({"content_type": "application/json", "message": "Scan failed.", "result": result}, status=500)
 
     def get(self, request: Request, *args, **kwargs) -> Response:
         return Response({"content_type": "application/json", "message": "Send a POST request to initiate the scan."}, status=200)
