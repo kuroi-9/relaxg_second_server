@@ -2,7 +2,7 @@
 - [django](https://github.com/django/django) selected framework
 
 ## Objectives
-The first iteration of RelaxG accomplished its objectives of manga images restoration, with an access over the internet. Thought, it was not enough to meet my reliability needs. Therefore, the second iteration of RelaxG is currently being developed to address these issues.
+The first iteration of [RelaxG](https://github.com/kuroi-9/relaxg) accomplished its objectives of manga images restoration, with an access over the internet. Thought, it was not enough to meet my reliability needs. Therefore, the second iteration of RelaxG is currently being developed to address these issues.
 The issues addressed in the second iteration of RelaxG include:
 - Adapted architecture to improve scalability and performance
 - Enhanced error handling and logging mechanisms
