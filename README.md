@@ -1,4 +1,4 @@
-# RelaxG : The Second - Back
+# RelaxG : The Second - Back-end
 - [django](https://github.com/django/django) selected framework
 
 ## Objectives
