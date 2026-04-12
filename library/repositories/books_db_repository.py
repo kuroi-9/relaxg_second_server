@@ -1,3 +1,4 @@
+from library.lib import tools
 from library.models import Book, Title
 from typing import Dict, Any, List
 
@@ -70,7 +71,9 @@ class BooksDBRepository:
         Post-conditions: Returns a list of Book instances.
         '''
 
-        return Book._default_manager.filter(title=title_name).all().order_by('title')
+        database_books_unsorted = Book._default_manager.filter(title=title_name).all().order_by('title')
+        return sorted(database_books_unsorted, key=tools.sort_key)
+
 
     def get_title_books_to_process(self, title_name: str) -> List[Book]:
         '''
@@ -79,7 +82,9 @@ class BooksDBRepository:
         Post-conditions: Returns a list of Book instances.
         '''
 
-        return Book._default_manager.filter(title=title_name).order_by('name')
+        database_books_unsorted = Book._default_manager.filter(title=title_name).order_by('name')
+        return sorted(database_books_unsorted, key=tools.sort_key)
+
 
     def get_book_by_id(self, book_id: int) -> Book | None:
         '''
